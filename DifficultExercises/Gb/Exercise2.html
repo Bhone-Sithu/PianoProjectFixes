@@ -538,8 +538,7 @@
             navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
             console.log("MIDI YES")
         } else {
-            document.getElementById("div_keyboard").style.display = "none";
-            document.getElementById("div_options").style.display = "none";
+
             document.getElementById("log_string").innerHTML =
                 "Your browser does not support the Web MIDI API!";
         }
