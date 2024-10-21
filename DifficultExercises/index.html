@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>Main Page</title>
+    <h1>Choose Major Keys</h1>
+
+    <button class="btn" onclick="document.location='../index.html'"><i class="fa fa-home"></i> Home </button>
+    <br><br>
+</head>
+<!-- CSS -->
+<style>
+    h1 {
+        text-align: center;
+    }
+    /* Button Design */
+    
+    .btn {
+        background-color: DodgerBlue;
+        border: none;
+        color: white;
+        padding: 12px 16px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    /* Darker background on mouse-over */
+    
+    .btn:hover {
+        background-color: RoyalBlue;
+    }
+    /* Button Design */
+    
+    .button {
+        background-color: transparent;
+        color: black;
+        font-size: 40px;
+        border: transparent;
+        width: 33.33%;
+        padding: 100px;
+        height: 300px;
+    }
+    
+    .button:hover {
+        color: white;
+    }
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    .column {
+        float: left;
+        width: 33.33%;
+        padding: 10px;
+        height: 300px;
+    }
+    /* Clear floats after the columns */
+    
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+</style>
+<!-- CSS -->
+
+<body>
+    <!-- 3 rows -->
+    <div class="row">
+        <!-- C -->
+        <div class="column" style="background-color: lightpink;">
+            <button class="button" onclick="document.location='C/Exercise1.html'">C</button>
+        </div>
+
+        <!-- C#/Db -->
+
+        <div class="column " style="background-color:skyblue; ">
+            <button class="button" onclick="document.location='Db/Exercise1.html'">C#/Db</button>
+        </div>
+
+        <!-- D -->
+        <div class="column " style="background-color:slateblue ">
+            <button class="button" onclick="document.location='D/Exercise1.html'">D</button>
+        </div>
+    </div>
+    <!-- 3 rows -->
+
+    <!-- 3 rows -->
+    <div class="row">
+        <!-- D#/Eb -->
+        <div class="column" style="background-color: rgb(202, 255, 182);">
+            <button class="button" onclick="document.location='Eb/Exercise1.html'">D#/Eb</button>
+        </div>
+
+        <!-- E -->
+
+        <div class="column " style="background-color:rgb(152, 135, 235); ">
+            <button class="button" onclick="document.location='E/Exercise1.html'">E</button>
+        </div>
+
+        <!-- F -->
+        <div class="column " style="background-color:rgb(205, 90, 161) ">
+            <button class="button" onclick="document.location='F/Exercise1.html'">F</button>
+        </div>
+    </div>
+    <!-- 3 rows -->
+
+    <!-- 3 rows -->
+    <div class="row">
+        <!-- F#/Gb -->
+        <div class="column" style="background-color: rgb(88, 234, 120);">
+            <button class="button" onclick="document.location='Gb/Exercise1.html'">F#/Gb</button>
+        </div>
+
+        <!-- G -->
+
+        <div class="column " style="background-color:rgb(248, 112, 167); ">
+            <button class="button" onclick="document.location='G/Exercise1.html'">G</button>
+        </div>
+
+        <!-- G#/Ab -->
+        <div class="column " style="background-color:rgb(90, 205, 178) ">
+            <button class="button" onclick="document.location='Ab/Exercise1.html'">G#/Ab</button>
+        </div>
+    </div>
+    <!-- 3 rows -->
+
+    <!-- 3 rows -->
+    <div class="row">
+        <!-- A -->
+        <div class="column" style="background-color: rgb(244, 158, 52);">
+            <button class="button" onclick="document.location='A/Exercise1.html'">A</button>
+        </div>
+
+        <!-- A#/Bb -->
+
+        <div class="column " style="background-color:rgb(248, 248, 108); ">
+            <button class="button" onclick="document.location='Bb/Exercise1.html'">A#/Bb</button>
+        </div>
+
+        <!-- B -->
+        <div class="column " style="background-color:rgb(246, 112, 110) ">
+            <button class="button" onclick="document.location='B/Exercise1.html'">B</button>
+        </div>
+    </div>
+    <!-- 3 rows -->
+</body>
+
+</html>

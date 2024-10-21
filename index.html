@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <h1>Welcome to Chord Transposition Website</h1>
+
+</head>
+<!-- CSS -->
+<style>
+    h1 {
+        text-align: center;
+    }
+    
+    .button {
+        background-color: transparent;
+        color: black;
+        font-size: 40px;
+        border: transparent;
+        width: 33.33%;
+        padding: 100px;
+        height: 300px;
+    }
+    
+    .button:hover {
+        color: white;
+    }
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    .column {
+        float: left;
+        width: 33.33%;
+        padding: 10px;
+        height: 300px;
+    }
+    /* Clear floats after the columns */
+    
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+</style>
+<!-- CSS -->
+
+<body>
+    <div class="row">
+        <div class="column" style="background-color: lightpink;">
+            <button class="button" onclick="document.location='easy.html'">BEGINNER</button>
+        </div>
+
+        <!-- Intermediate -->
+
+        <div class="column " style="background-color:skyblue; ">
+            <button class="button" onclick="document.location='DifficultExercises/index.html'">EXERCISES</button>
+        </div>
+        <div class="column " style="background-color:slateblue ">
+            <button class="button" onclick="document.location='adv_index.html'">ADVANCED</button>
+        </div>
+    </div>
+</body>
+
+</html>
