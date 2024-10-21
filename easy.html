@@ -771,9 +771,7 @@
         changeProgram(0);
         // Attach MIDI event "listeners" to each input
         for (var input of midiAccess.inputs.values()) {
-            // input.onmidimessage = throttle(getMIDIMessage, 200);
-            input.onmidimessage = getMIDIMessage;
-            console.log(input)
+            input.onmidimessage = throttle(getMIDIMessage, 200);
         }
     }
 
