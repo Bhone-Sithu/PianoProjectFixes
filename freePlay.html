@@ -697,7 +697,7 @@
                     });
                 }, 1000
             )
-            //document.getElementById(senderDiv.id).style.backgroundColor = "pink";
+            //
 
         currentOutput.send(noteOnMsg);
     }
@@ -716,32 +716,7 @@
         });
 
         let key = song_notes[current_notes_index];
-        // document.getElementById("previous_note").textContent = song_notes[current_notes_index-1] ?? "";
-        if (current_notes_index > 1) {
-            document.getElementById(current_notes_index - 2).className = " ";
-            document.getElementById(current_notes_index - 2).classList.add("no_note");
-        }
-
-        if (current_notes_index != 0) {
-            document.getElementById(current_notes_index - 1).className = " ";
-            document.getElementById(current_notes_index - 1).classList.add("previous_note");
-        }
-
-        // document.getElementById("next_note").textContent = song_notes[current_notes_index+1] ?? "";
-        if (current_notes_index != (song_notes.length)) {
-            document.getElementById(current_notes_index).className = " ";
-            document.getElementById(current_notes_index).classList.add("main_note");
-        }
-        // document.getElementById("note").textContent=key ?? "";
-        if (current_notes_index + 1 < song_notes.length) {
-            document.getElementById(current_notes_index + 1).className = " ";
-            document.getElementById(current_notes_index + 1).classList.add("next_note");
-        }
-        if (current_notes_index + 2 < song_notes.length) {
-            document.getElementById(current_notes_index + 2).className = " ";
-            document.getElementById(current_notes_index + 2).classList.add("future_note");
-        }
-        document.getElementById(key).classList.add("note_success");
+        // document.getElementById(key).classList.add("note_success");
         // document.getElementById("note").innerHTML = key;
         // console.log("hi");
     }

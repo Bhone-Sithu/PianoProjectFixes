@@ -769,14 +769,11 @@
         midi = midiAccess;
         getcurrentOutput();
         changeProgram(0);
-        var inputs = midiAccess.inputs;
-
-        ////gggg
-
         // Attach MIDI event "listeners" to each input
         for (var input of midiAccess.inputs.values()) {
-            const throttleMIDIMessage = throttle(getMIDIMessage, 200);
-            input.onmidimessage = throttleMIDIMessage;
+            // input.onmidimessage = throttle(getMIDIMessage, 200);
+            input.onmidimessage = getMIDIMessage;
+            console.log(input)
         }
     }
 
@@ -879,7 +876,7 @@
         }
         var noteOnMsg = [0x90, pitch, 96];
         currentOutput.send(noteOnMsg);
-        //document.getElementById(senderDiv.id).style.backgroundColor = "pink";
+        //
     }
 
     function stopNote(senderDiv) {
