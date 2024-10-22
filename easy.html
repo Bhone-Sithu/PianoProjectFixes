@@ -887,9 +887,7 @@
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
 
-        const midiNote = Tone.Frequency(key_id.slice(3), "midi").toNote();
-        piano.triggerAttack(midiNote, Tone.now());
-        piano.triggerRelease(midiNote, Tone.now()+0.75);
+
 
         // let clicked_note = document.getElementById(key_id).querySelector("p.chord").textContent;
         if (key_id === song_notes[current_notes_index]) {
@@ -930,8 +928,13 @@
             document.getElementById("error-count").innerText = "Error : " + error_count + "/10";
         }
         var noteOnMsg = [0x90, pitch, 96];
-        currentOutput.send(noteOnMsg);
-        //
+        if(midi) currentOutput.send(noteOnMsg);
+        else {
+            const midiNote = Tone.Frequency(key_id.slice(3), "midi").toNote();
+            piano.triggerAttack(midiNote, Tone.now());
+            piano.triggerRelease(midiNote, Tone.now()+0.75);
+        }
+
     }
 
     function stopNote(senderDiv) {
