@@ -434,6 +434,7 @@
 </body>
 <script src="https://unpkg.com/@tonejs/midi"></script>
 <script src="https://unpkg.com/tone/build/Tone.js"></script>
+<script src="https://unpkg.com/tone/build/Tone.js"></script>
 <script>
     // Pop Up Video
 
@@ -776,7 +777,48 @@
         }
     }
 
-    // gggg
+
+    function getMIDIMessage(midiMessage) {
+        const [command, note, velocity] = midiMessage.data;
+        const manufactures = midiMessage.currentTarget.manufacturer;
+        if (manufactures != "Apple Inc.") {
+            console.log("APPPLE APPLE")
+            playNote({
+                id: `key${note}`
+            });
+        }
+    }
+
+
+    function onMIDIFailure(msg) {
+        document.getElementById("log_string").innerHTML =
+            "No access to MIDI resources. Error message: " + msg;
+
+    }
+    function changeOutput(outputId) {
+        currentOutput.send([176, 123, 0]);
+        currentOutput = midi.outputs.get(outputId);
+    }
+
+    function getcurrentOutput() {
+        var outputsToString = "";
+        midi.outputs.forEach(function(output, key) {
+            if (outputsToString == "") {
+                outputsToString +=
+                    "<option selected='selected' value='" +
+                    key +
+                    "'>" +
+                    output.name +
+                    "</option>";
+                currentOutput = output;
+            } else {
+                outputsToString +=
+                    "<option value='" + output.id + "'>" + output.name + "</option>";
+            }
+        });
+        document.getElementById("chooseOutput").innerHTML = outputsToString;
+    }
+
     Tone.context = new AudioContext({ latencyHint: 'interactive' });
     Tone.Transport.latencyHint = 'interactive';
     const piano = new Tone.Sampler({
@@ -819,62 +861,6 @@
             console.log("Loaded")
         },
     }).toDestination();
-
-    function getMIDIMessage(midiMessage) {
-        const [command, note, velocity] = midiMessage.data;
-        const manufactures = midiMessage.currentTarget.manufacturer;
-        if (manufactures != "Apple Inc.") {
-            console.log("APPPLE APPLE")
-            playNote({
-                id: `key${note}`
-            });
-        }
-    }
-
-
-    function onMIDIFailure(msg) {
-        document.getElementById("log_string").innerHTML =
-            "No access to MIDI resources. Error message: " + msg;
-
-    }
-
-
-    function playPianoSound(note) {
-        // const midiNote = Tone.Frequency(note, "midi").toNote();
-        // piano.triggerRelease(midiNote);
-    }
-
-    function midiNoteToFrequency(note) {
-        // Formula to convert MIDI note number to frequency (A4 = 440Hz, MIDI note 69)
-        return 440 * Math.pow(2, (note - 69) / 12);
-    }
-    function changeOutput(outputId) {
-        currentOutput.send([176, 123, 0]);
-        currentOutput = midi.outputs.get(outputId);
-    }
-
-    function showAlert() {
-        alert("Hello world!");
-    }
-
-    function getcurrentOutput() {
-        var outputsToString = "";
-        midi.outputs.forEach(function(output, key) {
-            if (outputsToString == "") {
-                outputsToString +=
-                    "<option selected='selected' value='" +
-                    key +
-                    "'>" +
-                    output.name +
-                    "</option>";
-                currentOutput = output;
-            } else {
-                outputsToString +=
-                    "<option value='" + output.id + "'>" + output.name + "</option>";
-            }
-        });
-        document.getElementById("chooseOutput").innerHTML = outputsToString;
-    }
 
     function playNote(senderDiv) {
         console.log("Loaded Buffers:", piano._buffers);
@@ -937,7 +923,8 @@
 
     }
 
-    function stopNote(senderDiv) {
+
+function stopNote(senderDiv) {
         var pitch = senderDiv.id.substring(3, 5);
         var noteOffMsg = [0x80, pitch, 0];
         currentOutput.send(noteOffMsg);
