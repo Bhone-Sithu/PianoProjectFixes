@@ -834,12 +834,7 @@
 
         } else {
             document.getElementById(senderDiv.id).classList.add("note_fail")
-            error_count++;
-            if (error_count >= 10) {
-                alert("You have failed this exercise. Please try again.")
-                location.reload();
-            }
-            document.getElementById("error-count").innerText = "Error : " + error_count + "/10";
+
         }
         var noteOnMsg = [0x90, pitch, 96];
         if(midi) currentOutput.send(noteOnMsg);
