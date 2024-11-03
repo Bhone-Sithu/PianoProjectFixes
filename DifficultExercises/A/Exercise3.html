@@ -588,7 +588,8 @@
 
         // Attach MIDI event "listeners" to each input
         for (var input of midiAccess.inputs.values()) {
-            const throttleMIDIMessage = throttle(getMIDIMessage, 200);
+            // const throttleMIDIMessage = throttle(getMIDIMessage, 200);
+            const throttleMIDIMessage = getMIDIMessage
             input.onmidimessage = throttleMIDIMessage;
         }
     }
@@ -597,15 +598,27 @@
 
 
     function getMIDIMessage(midiMessage) {
-        console.log(midiMessage);
+
         const note = midiMessage.data[1];
         const manufactures = midiMessage.currentTarget.manufacturer;
-        if (manufactures != "Apple Inc.") {
-            console.log("APPPLE APPLE")
+        const id = midiMessage.currentTarget.id;
+        const pressOrlift = midiMessage.data[2]
+        if (id < 0 && manufactures !== "Apple Inc." && pressOrlift !== 0)
+        {
+            console.log(midiMessage)
             playNote({
-                id: `key${note}`
-            });
+                        id: `key${note}`
+                    });
         }
+        // if (manufactures != "Apple Inc.") {
+        //     console.log("APPPLE APPLE")
+        //     playNote({
+        //         id: `key${note}`
+        //     });
+        // }
+        // playNote({
+        //     id: `key${note}`
+        // });
     }
 
     function onMIDIFailure(msg) {

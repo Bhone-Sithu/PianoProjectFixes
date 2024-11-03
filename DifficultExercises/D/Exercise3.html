@@ -600,11 +600,14 @@
         console.log(midiMessage);
         const note = midiMessage.data[1];
         const manufactures = midiMessage.currentTarget.manufacturer;
-        if (manufactures != "Apple Inc.") {
-            console.log("APPPLE APPLE")
+        const id = midiMessage.currentTarget.id;
+        const pressOrlift = midiMessage.data[2]
+        if (id < 0 && manufactures !== "Apple Inc." && pressOrlift !== 0)
+        {
+            console.log(midiMessage)
             playNote({
-                id: `key${note}`
-            });
+                        id: `key${note}`
+                    });
         }
     }
 
