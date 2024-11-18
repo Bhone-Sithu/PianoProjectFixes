@@ -170,6 +170,10 @@
                 top: 150%;
             }
         }
+        midi-player::part(progress-bar),
+        midi-player::part(seek-bar) {
+            pointer-events: none !important;
+        }
     </style>
     <title>Advanced INC.MUSIC</title>
     <h1>C Major</h1>
@@ -180,7 +184,10 @@
 <body onload="startMIDI()">
     <div class="audio">
 
-        <midi-player src="songs/Prelude_C_major.mid" sound-font visualizer="#myVisualizer">
+        <midi-player
+                src="songs/Prelude_C_major.mid"
+                sound-font visualizer="#myVisualizer"
+                id="midiPlayer">
         </midi-player>
     </div>
     <p id="log_string"></p>
@@ -505,23 +512,52 @@
     var timeoutIDs = []; // Array to store setTimeout IDs
     let prevTime = 0;
 
+    let inactivityTimer = null;
+    let lastPlayedNoteIndex = 0;
+    const INACTIVITY_TIMEOUT = 5000; // 1 minute in milliseconds
+    let midiPlayer;
+
+    function setupMIDIPlayerListeners() {
+        midiPlayer.addEventListener('timeupdate', (e) => {
+            // Keep visual demo in sync with MIDI player
+            const currentTime = e.detail;
+            while (prevNoteIndex < noteToDisplay.length &&
+            noteToDisplay[prevNoteIndex].time < currentTime) {
+                prevNoteIndex++;
+            }
+            prevTime = currentTime;
+        });
+    }
+
     function scheduleEvents() {
         let delay = 0;
-        console.log("hihi")
-        noteToDisplay.slice(prevNoteIndex).forEach((note) => {
+        const currentTime = midiPlayer.currentTime;
 
-            delay = (note.time - prevTime) * 1000
+        noteToDisplay.slice(prevNoteIndex).forEach((note) => {
+            // Calculate delay relative to current MIDI player position
+            delay = (note.time - currentTime) * 1000;
+
+            if (delay < 0) {
+                // Skip notes that should have already played
+                prevNoteIndex++;
+                prevTime = note.time;
+                return;
+            }
+
             const noteTimeout = setTimeout(() => {
                 playNoteWithDelay(note);
                 prevNoteIndex++;
                 prevTime = note.time;
             }, delay);
+
             timeoutIDs.push(noteTimeout);
         });
     }
     const playButton = document.querySelector('midi-player').shadowRoot.querySelector('.play');
 
     async function startMIDI() {
+        midiPlayer = document.querySelector('midi-player');
+        setupMIDIPlayerListeners();
         playButton.addEventListener('click', () => {
             // Tone.Transport.bpm.value = 29;
             isMidiPlay = !isMidiPlay;
@@ -643,17 +679,58 @@
         document.getElementById("chooseOutput").innerHTML = outputsToString;
     }
 
-    function playNote(senderDiv) {
-        if (isMidiPlay) {
-            playButton.dispatchEvent(new Event("click"));
+    function resumeFromLastNote() {
+        if (midiPlayer) {
+            // Stop current playback
+            if (isMidiPlay) {
+                playButton.dispatchEvent(new Event('click'));
+            }
+
+            // Calculate time position based on last played note
+            const timePosition = noteToDisplay[lastPlayedNoteIndex].time;
+
+            // Set MIDI player currentTime to last played note position
+            midiPlayer.currentTime = timePosition;
+
+            // Reset visual demo state
+            prevNoteIndex = lastPlayedNoteIndex;
+            prevTime = timePosition;
+
+            // Clear existing timeouts
+            timeoutIDs.forEach((id) => {
+                clearTimeout(id);
+            });
+            timeoutIDs = [];
+
+            // Start playback from new position
             setTimeout(() => {
                 playButton.dispatchEvent(new Event("click"));
-            }, 10000)
+                isMidiPlay = true;
+                scheduleEvents();
+            }, 100);
         }
+    }
+
+    function playNote(senderDiv) {
+        if (inactivityTimer) {
+            clearTimeout(inactivityTimer);
+        }
+
+        if (isMidiPlay) {
+            playButton.dispatchEvent(new Event("click"));
+
+        }
+        inactivityTimer = setTimeout(() => {
+            resumeFromLastNote();
+        }, INACTIVITY_TIMEOUT);
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
         var noteOnMsg = [0x90, pitch, 96];
         if (key_id === song_notes[current_notes_index]) {
+
+            lastPlayedNoteIndex = current_notes_index;
+
+
             console.log("hi");
             //Progress percent calculate
             let keyCount = song_notes.length;
@@ -708,48 +785,6 @@
             piano.triggerRelease(midiNote, Tone.now()+0.75);
         }
     }
-    Tone.context = new AudioContext({ latencyHint: 'interactive' });
-    Tone.Transport.latencyHint = 'interactive';
-    const piano = new Tone.Sampler({
-        urls: {
-            "A0": "A0.mp3",
-            "C1": "C1.mp3",
-            "D#1": "Ds1.mp3",
-            "F#1": "Fs1.mp3",
-            "A1": "A1.mp3",
-            "C2": "C2.mp3",
-            "D#2": "Ds2.mp3",
-            "F#2": "Fs2.mp3",
-            "A2": "A2.mp3",
-            "C3": "C3.mp3",
-            "D#3": "Ds3.mp3",
-            "F#3": "Fs3.mp3",
-            "A3": "A3.mp3",
-            "C4": "C4.mp3",
-            "D#4": "Ds4.mp3",
-            "F#4": "Fs4.mp3",
-            "A4": "A4.mp3",
-            "C5": "C5.mp3",
-            "D#5": "Ds5.mp3",
-            "F#5": "Fs5.mp3",
-            "A5": "A5.mp3",
-            "C6": "C6.mp3",
-            "D#6": "Ds6.mp3",
-            "F#6": "Fs6.mp3",
-            "A6": "A6.mp3",
-            "C7": "C7.mp3",
-            "D#7": "Ds7.mp3",
-            "F#7": "Fs7.mp3",
-            "A7": "A7.mp3",
-            "C8": "C8.mp3"
-        },
-        release: 1,
-        // baseUrl: "https://tonejs.github.io/audio/salamander/", // Sample piano audio from the Salamander Piano
-        baseUrl:"./piano_samples/",
-        onload:()=>{
-            console.log("Loaded")
-        },
-    }).toDestination();
     const note_refresh = () => {
 
         var elements = document.getElementsByClassName("note_success");
