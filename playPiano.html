@@ -706,20 +706,26 @@
         changeProgram(0);
         // Attach MIDI event "listeners" to each input
         for (var input of midiAccess.inputs.values()) {
-            input.onmidimessage = throttle(getMIDIMessage, 200);
+            input.onmidimessage = throttle(getMIDIMessage, 0);
+            // input.onmidimessage = getMIDIMessage();
         }
     }
 
-
+    let previousNote = 0;
     function getMIDIMessage(midiMessage) {
         const [command, note, velocity] = midiMessage.data;
+        console.log(note);
         const manufactures = midiMessage.currentTarget.manufacturer;
-        if (manufactures != "Apple Inc.") {
-            console.log("APPPLE APPLE")
+        if ((command === 144 && velocity > 0) && previousNote !== note) {
+            console.log("play");
             playNote({
                 id: `key${note}`
             });
         }
+        previousNote = note;
+        setTimeout(()=>{
+            previousNote = 0;
+        },50)
     }
 
 
