@@ -556,14 +556,16 @@
     const playButton = document.querySelector('midi-player').shadowRoot.querySelector('.play');
 
     async function startMIDI() {
-        midiPlayer = document.querySelector('midi-player');
-        setupMIDIPlayerListeners();
+        midiPlayer = document.getElementById("midiPlayer");
         playButton.addEventListener('click', () => {
             // Tone.Transport.bpm.value = 29;
+
             isMidiPlay = !isMidiPlay;
             if (isMidiPlay) {
-                scheduleEvents();
+                resumeFromLastNote();
             } else {
+                let timePosition = noteToDisplay[lastPlayedNoteIndex].time;
+                midiPlayer.currentTime = timePosition;
                 timeoutIDs.forEach((id) => {
                     clearTimeout(id);
                 });
@@ -678,20 +680,41 @@
         });
         document.getElementById("chooseOutput").innerHTML = outputsToString;
     }
+    function updateMIDIPlayerTime(timePosition) {
+        if (!midiPlayer || !midiPlayer.shadowRoot) return;
 
+        // Update the visualizer time
+        const visualizer = midiPlayer.shadowRoot.querySelector('midi-visualizer');
+        if (visualizer) {
+            visualizer.currentTime = timePosition;
+        }
+
+        // Update the player's internal time
+        midiPlayer.currentTime = timePosition;
+
+        // Update the time display
+        const timeDisplay = midiPlayer.shadowRoot.querySelector('.time');
+        if (timeDisplay) {
+            const minutes = Math.floor(timePosition / 60);
+            const seconds = Math.floor(timePosition % 60);
+            timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update progress bar
+        const progressBar = midiPlayer.shadowRoot.querySelector('.progress-bar');
+        if (progressBar && midiPlayer.duration) {
+            const progress = (timePosition / midiPlayer.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+    }
     function resumeFromLastNote() {
         if (midiPlayer) {
-            // Stop current playback
-            if (isMidiPlay) {
-                playButton.dispatchEvent(new Event('click'));
-            }
-
             // Calculate time position based on last played note
             const timePosition = noteToDisplay[lastPlayedNoteIndex].time;
-
             // Set MIDI player currentTime to last played note position
-            midiPlayer.currentTime = timePosition;
 
+            midiPlayer.currentTime = timePosition;
+            console.log(midiPlayer.currentTime)
             // Reset visual demo state
             prevNoteIndex = lastPlayedNoteIndex;
             prevTime = timePosition;
@@ -702,14 +725,16 @@
             });
             timeoutIDs = [];
 
-            // Start playback from new position
+            // Start playback
             setTimeout(() => {
-                playButton.dispatchEvent(new Event("click"));
-                isMidiPlay = true;
+                if (!isMidiPlay) {
+                    playButton.dispatchEvent(new Event('click'));
+                }
                 scheduleEvents();
             }, 100);
         }
     }
+
 
     function playNote(senderDiv) {
         if (inactivityTimer) {
@@ -721,7 +746,9 @@
 
         }
         inactivityTimer = setTimeout(() => {
-            resumeFromLastNote();
+            if (!isMidiPlay) {
+                resumeFromLastNote();
+            }
         }, INACTIVITY_TIMEOUT);
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
