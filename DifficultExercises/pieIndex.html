@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add the Chart.js Datalabels plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <title>Main Page</title>
+</head>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px;
+    }
+
+    .chart-container {
+        width: 600px;
+        height: 600px;
+        margin: 20px auto;
+    }
+</style>
+
+<body>
+<h1>Choose Major Keys</h1>
+<button class="btn" onclick="document.location='../index.html'">
+    <i class="fa fa-home"></i> Home
+</button>
+
+<div class="chart-container">
+    <canvas id="piano-pie"></canvas>
+</div>
+
+<script>
+    // Register the plugin
+    Chart.register(ChartDataLabels);
+
+    const ctx = document.getElementById('piano-pie');
+    const pastelColors=[
+        '#FFB3BA',
+        '#BAFFC9',
+        '#BAE1FF',
+        '#FFFFBA',
+        '#FFB3F7',
+        '#B5EAD7',
+        '#E2F0CB',
+        '#C7CEEA',
+        '#FFDAC1',
+        '#E0BBE4',
+        '#957DAD',
+        '#FEC8D8'
+    ];
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['C', 'G', 'D', 'A', 'E', 'B', 'F♯/G♭', 'D♭', 'A♭', 'E♭', 'B♭', 'F'],
+            datasets: [{
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                backgroundColor: [
+                    '#ff6a6a', '#4ECDC4', '#fff490', '#57ffb3',
+                    '#cbffad', '#ff9393', '#712fff', '#3498DB',
+                    '#ed9cff', '#9b78ff', '#208c4f', '#ffca00'
+                ],
+                borderColor: '#fff',
+                hoverOffset:100,
+                offset:0,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            onHover: (event, element)=>{
+                event.native.target.style.cursor = element[0]?'pointer':'default';
+                // event.native.target.style.scale = 1.5;
+            },
+            hover:{
+                mode:'nearest',
+                intersect:true
+            },
+            animation:{
+                animateScale:true,
+                animateRotate:true,
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: false
+                },
+                datalabels: {
+                    color: '#000',
+                    font: {
+                        size: 24,
+                    },
+                    formatter: function(value, context) {
+                        return context.chart.data.labels[context.dataIndex];
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                    offset: 0,
+                    rotation: function(context) {
+                        const angle = context.dataIndex * 30 - 60; // Adjust rotation for each slice
+                        return angle;
+                    }
+                }
+            },
+            onClick: (event, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const key = ['C', 'G', 'D', 'A', 'E', 'B', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F'][index];
+                    window.location.href = `${key}/Exercise1.html`;
+                }
+            },
+            layout: {
+                padding: 35
+            }
+        }
+    });
+</script>
+</body>
+
+</html>
