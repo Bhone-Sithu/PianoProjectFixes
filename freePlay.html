@@ -644,7 +644,7 @@
         console.log(midiMessage);
         const note = midiMessage.data[1];
         const manufactures = midiMessage.currentTarget.manufacturer;
-        if (manufactures != "Apple Inc.") {
+        if (manufactures !== "Apple Inc.") {
             console.log("APPPLE APPLE")
             playNote({
                 id: `key${note}`
