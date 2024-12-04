@@ -3,8 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #exercise-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            row-gap: 20px;
+            column-gap: 20px;
+            width: 80%;
+            max-width: 800px;
+            margin: 2% auto;
+            aspect-ratio: 4/3;
+        }
+
+        .exercise {
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .exercise:hover {
+            transform: scale(1.1);
+        }
+
+        /* Color assignments for each exercise */
+        .exercise:nth-child(1) { background-color: #4B89DC; }  /* Blue */
+        .exercise:nth-child(2) { background-color: #8CC152; }  /* Green */
+        .exercise:nth-child(3) { background-color: #E9573F; }  /* Red */
+        .exercise:nth-child(4) { background-color: #967ADC; }  /* Purple */
+        .exercise:nth-child(5) { background-color: #F6BB42; }  /* Yellow */
+        .exercise:nth-child(6) { background-color: #3BAFDA; }  /* Light Blue */
+        .exercise:nth-child(7) { background-color: #D770AD; }  /* Pink */
+        .exercise:nth-child(8) { background-color: #37BC9B; }  /* Turquoise */
+        .exercise:nth-child(9) { background-color: #E87E04; }  /* Orange */
+        .exercise:nth-child(10) { background-color: #656D78; } /* Gray */
+        .exercise:nth-child(11) { background-color: #DA4453; } /* Dark Red */
+        .exercise:nth-child(12) { background-color: #434A54; } /* Dark Gray */
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
 <body>
+<h1>C Major</h1>
+<div id="exercise-container">
+</div>
 
+<script>
+    const exerciseContainer = document.getElementById("exercise-container");
+
+    for (let i = 1; i <= 12; i++) {
+        const exercise = document.createElement("a");
+        exercise.classList.add("exercise");
+        exercise.textContent = i;
+        exercise.href = `Exercise${i}.html`;
+        exerciseContainer.appendChild(exercise);
+    }
+</script>
 </body>
 </html>
