@@ -800,8 +800,7 @@
 
         // Attach MIDI event "listeners" to each input
         for (var input of midiAccess.inputs.values()) {
-            const throttleMIDIMessage = throttle(getMIDIMessage, 200);
-            input.onmidimessage = throttleMIDIMessage;
+            input.onmidimessage = getMIDIMessage;
         }
     }
 
@@ -809,16 +808,22 @@
 
 
     function getMIDIMessage(midiMessage) {
-        console.log(midiMessage);
-        const note = midiMessage.data[1];
-        const manufactures = midiMessage.currentTarget.manufacturer;
-        if (manufactures != "Apple Inc.") {
-            console.log("APPPLE APPLE")
-            playNote({
-                id: `key${note}`
-            });
-        }
+    // MIDI message format: [status, note, velocity]
+    const [status, note, velocity] = midiMessage.data;
+
+    // Check if it's a noteOn message (status >= 144 && status <= 159)
+    if (status >= 144 && status <= 159 && velocity > 0) {
+        playNote({
+            id: `key${note}`
+        });
     }
+    // Check if it's a noteOff message (status >= 128 && status <= 143 or noteOn with velocity 0)
+    else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
+        stopNote({
+            id: `key${note}`
+        });
+    }
+}
 
 
     function onMIDIFailure(msg) {

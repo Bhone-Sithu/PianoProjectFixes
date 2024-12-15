@@ -658,7 +658,6 @@
             }, delay);
         }
     }
-    ///ggg
 
     function onMIDISuccess(midiAccess) {
         document.getElementById("log_string").innerHTML = "Welcome to Use MIDI";
@@ -668,33 +667,29 @@
 
         var inputs = midiAccess.inputs;
 
-        ////gggg
-
         // Attach MIDI event "listeners" to each input
         for (var input of midiAccess.inputs.values()) {
-            const throttleMIDIMessage = throttle(getMIDIMessage, 200);
-            input.onmidimessage = throttleMIDIMessage;
+            input.onmidimessage = getMIDIMessage;
         }
     }
-
-    // gggg
-
 
     function getMIDIMessage(midiMessage) {
-        console.log(midiMessage);
-        const note = midiMessage.data[1];
-        const manufactures = midiMessage.currentTarget.manufacturer;
-        const id = midiMessage.currentTarget.id;
-        const pressOrlift = midiMessage.data[2]
-        if (id < 0 && manufactures !== "Apple Inc." && pressOrlift !== 0)
-        {
-            console.log(midiMessage)
-            playNote({
-                        id: `key${note}`
-                    });
-        }
+    // MIDI message format: [status, note, velocity]
+    const [status, note, velocity] = midiMessage.data;
+    
+    // Check if it's a noteOn message (status >= 144 && status <= 159)
+    if (status >= 144 && status <= 159 && velocity > 0) {
+        playNote({
+            id: `key${note}`
+        });
     }
-
+    // Check if it's a noteOff message (status >= 128 && status <= 143 or noteOn with velocity 0)
+    else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
+        stopNote({
+            id: `key${note}`
+        });
+    }
+}
     function onMIDIFailure(msg) {
         document.getElementById("log_string").innerHTML =
             "No access to MIDI resources. Error message: " + msg;
@@ -731,12 +726,18 @@
     var clickedMultipleKeys = [];
 
     const checkMultipleKeys = () => {
-        let checkCount = 0;
-        clickedMultipleKeys.map(element => {
-            if (song_notes.includes(element)) checkCount++;
-        })
-        return (checkCount === 3);
-
+        if (clickedMultipleKeys.length !== 3) return false;
+    
+    // Create a Set to get unique keys only
+    const uniqueKeysPressed = new Set(clickedMultipleKeys);
+    
+    // If there are duplicates, uniqueKeysPressed.size will be less than 3
+    if (uniqueKeysPressed.size !== 3) return false;
+    
+    // Check if all pressed keys match song_notes exactly
+    return song_notes.every(requiredKey => 
+        uniqueKeysPressed.has(requiredKey)
+    );
 
     }
 
@@ -744,16 +745,16 @@
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
         // let clicked_note = document.getElementById(key_id).querySelector("p.chord").textContent;
-
+    
         if (song_notes.includes(key_id)) {
             let node = document.createElement("div");
             node.classList.add("success_note_tile");
             document.getElementById(key_id).appendChild(node);
-            clickedMultipleKeys.push(key_id)
+            clickedMultipleKeys.push(key_id);
             setTimeout(
                 () => {
                     clickedMultipleKeys = [];
-                }, 500
+                }, 200
             )
             if (checkMultipleKeys()) {
                 // Function to show SweetAlert confirmation dialog

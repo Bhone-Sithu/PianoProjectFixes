@@ -181,7 +181,7 @@
         }
     </style>
     <title>Advanced INC.MUSIC</title>
-    <h1>C Major</h1>
+    <h1>C Majors</h1>
     <button class="btn" onclick="document.location='index.html'"><i class="fa fa-home"></i>Home </button>
 
 </head>
@@ -716,28 +716,26 @@
 
         // Attach MIDI event "listeners" to each input
         for (var input of midiAccess.inputs.values()) {
-            const throttleMIDIMessage = throttle(getMIDIMessage, 200);
-            input.onmidimessage = throttleMIDIMessage;
+            // const throttleMIDIMessage = throttle(getMIDIMessage, 200);
+            input.onmidimessage = getMIDIMessage;
         }
     }
 
-    // gggg
-
 
     function getMIDIMessage(midiMessage) {
-        console.log(midiMessage);
-        const note = midiMessage.data[1];
-        const manufactures = midiMessage.currentTarget.manufacturer;
-        // if (manufactures !== "Apple Inc.") {
-        //     console.log("APPPLE APPLE")
-        //     playNote({
-        //         id: `key${note}`
-        //     });
-        // }
+    const [status, note, velocity] = midiMessage.data;
+
+    if (status >= 144 && status <= 159 && velocity > 0) {
         playNote({
             id: `key${note}`
         });
     }
+    else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
+        stopNote({
+            id: `key${note}`
+        });
+    }
+}
 
     function onMIDIFailure(msg) {
         document.getElementById("log_string").innerHTML =
@@ -844,12 +842,10 @@
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
         var noteOnMsg = [0x90, pitch, 96];
+        console.log("Played!!!");
         if (key_id === song_notes[current_notes_index]) {
 
             lastPlayedNoteIndex = current_notes_index;
-
-
-            console.log("hi");
             //Progress percent calculate
             let keyCount = song_notes.length;
             let oneNotePercent = (1 / song_notes.length) * 100;

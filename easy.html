@@ -867,7 +867,6 @@
         const [command, note, velocity] = midiMessage.data;
         const manufactures = midiMessage.currentTarget.manufacturer;
         if (manufactures != "Apple Inc.") {
-            console.log("APPPLE APPLE")
             playNote({
                 id: `key${note}`
             });
@@ -1004,6 +1003,8 @@
             const midiNote = Tone.Frequency(key_id.slice(3), "midi").toNote();
             piano.triggerAttack(midiNote, Tone.now());
             piano.triggerRelease(midiNote, Tone.now()+0.75);
+
+            
         }
 
     }
@@ -1012,7 +1013,7 @@
 function stopNote(senderDiv) {
         var pitch = senderDiv.id.substring(3, 5);
         var noteOffMsg = [0x80, pitch, 0];
-        currentOutput.send(noteOffMsg);
+        // currentOutput.send(noteOffMsg);
         if (
             pitch % 12 == 1 ||
             pitch % 12 == 3 ||
