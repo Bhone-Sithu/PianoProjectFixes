@@ -2,15 +2,15 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- Sweet Alert -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <style>
         h1 {
             text-align: center;
         }
-        
+
         .btn {
             background-color: DodgerBlue;
             border: none;
@@ -19,19 +19,20 @@
             font-size: 16px;
             cursor: pointer;
         }
+
         /* Darker background on mouse-over */
-        
+
         .btn:hover {
             background-color: RoyalBlue;
         }
-        
+
         div {
             clear: left;
             padding: 0;
             padding-top: 30px;
             cursor: default;
         }
-        
+
         div.white_key {
             clear: none;
             height: 100px;
@@ -42,7 +43,7 @@
             cursor: pointer;
             position: relative;
         }
-        
+
         div.white_key:hover {
             clear: none;
             height: 100px;
@@ -52,7 +53,7 @@
             cursor: pointer;
             background-color: rgb(83, 171, 238);
         }
-        
+
         div.black_key {
             position: absolute;
             height: 50px;
@@ -61,77 +62,78 @@
             background-color: black;
             cursor: pointer;
         }
-        
+
         .keyboard {
             text-align: center;
         }
-        
+
         #div_keyboard {
             margin: 0 auto;
             width: 100vw;
-            scale:0.95;
+            scale: 0.95;
         }
-        
+
         .chord {
             text-align: center;
             margin-top: 65px;
         }
-        
+
         .black_chord {
             text-align: center;
             margin-top: 2px;
             color: aliceblue;
         }
-        
+
         div.note_success {
             /*background-color: greenyellow;*/
         }
-        
+
         div.note_fail {
             background-color: #82ffee !important;
         }
-        
-        #note_container {display:none;
+
+        #note_container {
+            display: none;
             width: fit-content;
             height: 100px;
             position: relative;
             margin: 0 auto;
         }
-        
+
         #note_container p {
             margin: 1%;
             font-size: 1.5rem;
             transition: 0.75s ease-in-out;
         }
-        
+
         #note_container .main_note {
             opacity: 1;
             font-size: 1.5rem;
             left: 20%;
         }
-        
+
         #note_container .previous_note {
             opacity: 0.5;
             left: 16%;
         }
-        
+
         #note_container .no_note {
             scale: 0;
             opacity: 0;
             left: 10%;
         }
-        
+
         #note_container .next_note {
             opacity: 0.5;
             left: 25%;
         }
-        
+
         #note_container .future_note {
             scale: 0;
             opacity: 0;
             left: 30%;
         }
-        
+
         .success_note_tile {
             height: 100%;
             width: 100%;
@@ -140,8 +142,9 @@
             position: absolute;
             opacity: 0;
         }
+
         /* Music Player Part */
-        
+
         @keyframes success_note_fly {
             0% {
                 opacity: 0.8;
@@ -157,259 +160,320 @@
     <h1>Practice Exercise 3</h1>
     <!-- EDIT -->
     <h2>Press all three keys together to pass this exercise</h2>
-    <button class="btn" onclick="document.location='../index.html'"><i class="fa fa-home"></i>Home </button>
+    <button class="btn" onclick="document.location='../index.html'"><i class="fa fa-home"></i>Home</button>
 
 </head>
 
 <body onload="startMIDI()">
-    <!-- Audio Start -->
-    <div class="audio">
-        <midi-player src="../../songs/Prelude_C_major.mid" sound-font visualizer="#myVisualizer">
-        </midi-player>
-    </div>
-    <!-- Audio End -->
+<!-- Audio Start -->
+<div class="audio">
+    <midi-player sound-font src="../../songs/Prelude_C_major.mid" visualizer="#myVisualizer">
+    </midi-player>
+</div>
+<!-- Audio End -->
 
-    <!-- Adjust Tempo Start -->
+<!-- Adjust Tempo Start -->
 
-    <span class="input">
+<span class="input">
         <b>Adjust Tempo</b>
-        <input id="tempoInput" onchange="changeTempo(event)" value="29" type="range" min="20" max="240" step="1">
+        <input id="tempoInput" max="240" min="20" onchange="changeTempo(event)" step="1" type="range" value="29">
         <span id="tempoValue">30</span>
     </span>
-    <!-- Adjust Tempo End -->
+<!-- Adjust Tempo End -->
 
 
-    <p id="log_string"></p>
-    <div id="note_container">
-        <!-- <p id="note" style="opacity: 1;"></p> -->
+<p id="log_string"></p>
+<div id="note_container">
+    <!-- <p id="note" style="opacity: 1;"></p> -->
+</div>
+<div id="div_keyboard">
+
+    <!-- white keys -->
+    <!--        NEW KEYS-->
+    <div class="white_key" id="key36" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">C</p>
     </div>
-    <div id="div_keyboard">
-
-        <!-- white keys -->
-        <!--        NEW KEYS-->
-        <div id="key36" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key38" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key40" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key41" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key43" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key45" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key47" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-<!--        NEW KEYS-->
-        <div id="key48" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key50" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key52" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key53" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key55" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key57" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key59" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-        <div id="key60" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key62" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key64" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key65" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key67" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key69" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key71" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-        <div id="key72" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key74" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key76" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key77" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key79" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key81" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key83" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-        <div id="key84" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-<!--        NEW KEYS-->
-        <div id="key85" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key87" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key89" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key90" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key92" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key94" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key96" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-        <!-- black keys -->
-        <!-- First Octave Black Keys -->
-        <div id="key37" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 30px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key39" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 70px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key42" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 150px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key44" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 190px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key46" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 230px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
-
-        <!-- Second Octave Black Keys -->
-        <div id="key49" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 310px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key51" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 350px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key54" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 430px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key56" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 470px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key58" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 510px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
-
-        <!-- Third Octave Black Keys -->
-        <div id="key61" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 590px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key63" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 630px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key66" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 710px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key68" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 750px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key70" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 790px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
-
-        <!-- Fourth Octave Black Keys -->
-        <div id="key73" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 870px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key75" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 910px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key78" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 990px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key80" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1030px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key82" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1070px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
-
-        <!-- Fifth Octave Black Keys -->
-        <div id="key86" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1150px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key88" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1190px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key91" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1270px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key93" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1310px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key95" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1350px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
+    <div class="white_key" id="key38" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">D</p>
     </div>
-    <div id="div_options">
+    <div class="white_key" id="key40" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div class="white_key" id="key41" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div class="white_key" id="key43" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div class="white_key" id="key45" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div class="white_key" id="key47" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <!--        NEW KEYS-->
+    <div class="white_key" id="key48" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <div class="white_key" id="key50" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">D</p>
+    </div>
+    <div class="white_key" id="key52" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div class="white_key" id="key53" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div class="white_key" id="key55" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div class="white_key" id="key57" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div class="white_key" id="key59" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <div class="white_key" id="key60" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <div class="white_key" id="key62" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">D</p>
+    </div>
+    <div class="white_key" id="key64" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div class="white_key" id="key65" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div class="white_key" id="key67" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div class="white_key" id="key69" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div class="white_key" id="key71" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <div class="white_key" id="key72" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <div class="white_key" id="key74" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">D</p>
+    </div>
+    <div class="white_key" id="key76" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div class="white_key" id="key77" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div class="white_key" id="key79" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div class="white_key" id="key81" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div class="white_key" id="key83" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <div class="white_key" id="key84" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <!--        NEW KEYS-->
+    <div class="white_key" id="key85" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <div class="white_key" id="key87" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">D</p>
+    </div>
+    <div class="white_key" id="key89" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div class="white_key" id="key90" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div class="white_key" id="key92" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div class="white_key" id="key94" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div class="white_key" id="key96" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <!-- black keys -->
+    <!-- First Octave Black Keys -->
+    <div class="black_key" id="key37" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 30px">
+        <p class="black_chord">C#<br/>Db</p>
+    </div>
+    <div class="black_key" id="key39" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 70px">
+        <p class="black_chord">D#<br/>Eb</p>
+    </div>
+    <div class="black_key" id="key42" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 150px">
+        <p class="black_chord">F#<br/>Gb</p>
+    </div>
+    <div class="black_key" id="key44" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 190px">
+        <p class="black_chord">G#<br/>Ab</p>
+    </div>
+    <div class="black_key" id="key46" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 230px">
+        <p class="black_chord">A#<br/>Bb</p>
+    </div>
 
-        <p>
-            <label for="chooseOutput">MIDI Output</label><br />
-            <select id="chooseOutput" onchange="changeOutput(value)">
+    <!-- Second Octave Black Keys -->
+    <div class="black_key" id="key49" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 310px">
+        <p class="black_chord">C#<br/>Db</p>
+    </div>
+    <div class="black_key" id="key51" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 350px">
+        <p class="black_chord">D#<br/>Eb</p>
+    </div>
+    <div class="black_key" id="key54" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 430px">
+        <p class="black_chord">F#<br/>Gb</p>
+    </div>
+    <div class="black_key" id="key56" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 470px">
+        <p class="black_chord">G#<br/>Ab</p>
+    </div>
+    <div class="black_key" id="key58" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 510px">
+        <p class="black_chord">A#<br/>Bb</p>
+    </div>
+
+    <!-- Third Octave Black Keys -->
+    <div class="black_key" id="key61" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 590px">
+        <p class="black_chord">C#<br/>Db</p>
+    </div>
+    <div class="black_key" id="key63" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 630px">
+        <p class="black_chord">D#<br/>Eb</p>
+    </div>
+    <div class="black_key" id="key66" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 710px">
+        <p class="black_chord">F#<br/>Gb</p>
+    </div>
+    <div class="black_key" id="key68" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 750px">
+        <p class="black_chord">G#<br/>Ab</p>
+    </div>
+    <div class="black_key" id="key70" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 790px">
+        <p class="black_chord">A#<br/>Bb</p>
+    </div>
+
+    <!-- Fourth Octave Black Keys -->
+    <div class="black_key" id="key73" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 870px">
+        <p class="black_chord">C#<br/>Db</p>
+    </div>
+    <div class="black_key" id="key75" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 910px">
+        <p class="black_chord">D#<br/>Eb</p>
+    </div>
+    <div class="black_key" id="key78" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 990px">
+        <p class="black_chord">F#<br/>Gb</p>
+    </div>
+    <div class="black_key" id="key80" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 1030px">
+        <p class="black_chord">G#<br/>Ab</p>
+    </div>
+    <div class="black_key" id="key82" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 1070px">
+        <p class="black_chord">A#<br/>Bb</p>
+    </div>
+
+    <!-- Fifth Octave Black Keys -->
+    <div class="black_key" id="key86" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 1150px">
+        <p class="black_chord">C#<br/>Db</p>
+    </div>
+    <div class="black_key" id="key88" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 1190px">
+        <p class="black_chord">D#<br/>Eb</p>
+    </div>
+    <div class="black_key" id="key91" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 1270px">
+        <p class="black_chord">F#<br/>Gb</p>
+    </div>
+    <div class="black_key" id="key93" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 1310px">
+        <p class="black_chord">G#<br/>Ab</p>
+    </div>
+    <div class="black_key" id="key95" onmousedown="playNote(this)" onmouseout="stopNote(this)"
+         onmouseup="stopNote(this)" style="margin-left: 1350px">
+        <p class="black_chord">A#<br/>Bb</p>
+    </div>
+</div>
+<div id="div_options">
+
+    <p>
+        <label for="chooseOutput">MIDI Output</label><br/>
+        <select id="chooseOutput" onchange="changeOutput(value)">
             <option>None</option>
         </select>
-        </p>
-        <p>
-            Instrument<br />
-            <input type="radio" name="instrument" id="piano" checked="checked" onclick="changeProgram(0)" />
-            <label for="piano">Piano</label>
-            <input type="radio" name="instrument" id="harpsichord" onclick="changeProgram(6)" />
-            <label for="harpsichord">Harpsichord</label>
-            <input type="radio" name="instrument" id="organ" onclick="changeProgram(19)" />
-            <label for="organ">Organ</label>
-            <input type="radio" name="instrument" id="celesta" onclick="changeProgram(8)" />
-            <label for="celesta">Celesta</label>
-        </p>
+    </p>
+    <p>
+        Instrument<br/>
+        <input checked="checked" id="piano" name="instrument" onclick="changeProgram(0)" type="radio"/>
+        <label for="piano">Piano</label>
+        <input id="harpsichord" name="instrument" onclick="changeProgram(6)" type="radio"/>
+        <label for="harpsichord">Harpsichord</label>
+        <input id="organ" name="instrument" onclick="changeProgram(19)" type="radio"/>
+        <label for="organ">Organ</label>
+        <input id="celesta" name="instrument" onclick="changeProgram(8)" type="radio"/>
+        <label for="celesta">Celesta</label>
+    </p>
 
-    </div>
+</div>
 </body>
 
 <!-- MIDI PLAYER START-->
 <script src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.4.0"></script>
-    <script src="https://unpkg.com/@tonejs/midi"></script>
-    <script src="https://unpkg.com/tone/build/Tone.js"></script>
+<script src="https://unpkg.com/@tonejs/midi"></script>
+<script src="https://unpkg.com/tone/build/Tone.js"></script>
 
 <!-- MIDI PLAYER END -->
 <script>
@@ -420,10 +484,9 @@
     const note_refresh = () => {
 
 
-
         elements = document.getElementsByClassName("note_fail");
         elementsArray = Array.from(elements);
-        elementsArray.forEach(function(element) {
+        elementsArray.forEach(function (element) {
             element.classList.remove("note_fail");
         });
 
@@ -475,7 +538,7 @@
                 case "9": //A#3
                     keyid = 58;
                     break;
-                    // first white keys
+                // first white keys
                 case "1": //D3
                     keyid = 50;
                     break;
@@ -494,7 +557,7 @@
                 case "0": //B3
                     keyid = 59;
                     break;
-                    // last 2 octaves of black keys
+                // last 2 octaves of black keys
                 case "Q": //C#4
                     keyid = 61;
                     break;
@@ -525,7 +588,7 @@
                 case "P": //A#5
                     keyid = 82;
                     break;
-                    // White Key
+                // White Key
                 case "A": //A3
                     keyid = 57;
                     break;
@@ -630,7 +693,6 @@
         }
 
 
-
         // Adjust Tempo Start-1
         const playButton = document.querySelector('midi-player').shadowRoot.querySelector('.play');
         playButton.addEventListener('click', () => {
@@ -641,6 +703,7 @@
 
 
     }
+
     ///ggggg
 
     function throttle(cb, delay) {
@@ -674,22 +737,23 @@
     }
 
     function getMIDIMessage(midiMessage) {
-    // MIDI message format: [status, note, velocity]
-    const [status, note, velocity] = midiMessage.data;
-    
-    // Check if it's a noteOn message (status >= 144 && status <= 159)
-    if (status >= 144 && status <= 159 && velocity > 0) {
-        playNote({
-            id: `key${note}`
-        });
+        // MIDI message format: [status, note, velocity]
+        const [status, note, velocity] = midiMessage.data;
+
+        // Check if it's a noteOn message (status >= 144 && status <= 159)
+        if (status >= 144 && status <= 159 && velocity > 0) {
+            playNote({
+                id: `key${note}`
+            });
+        }
+        // Check if it's a noteOff message (status >= 128 && status <= 143 or noteOn with velocity 0)
+        else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
+            stopNote({
+                id: `key${note}`
+            });
+        }
     }
-    // Check if it's a noteOff message (status >= 128 && status <= 143 or noteOn with velocity 0)
-    else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
-        stopNote({
-            id: `key${note}`
-        });
-    }
-}
+
     function onMIDIFailure(msg) {
         document.getElementById("log_string").innerHTML =
             "No access to MIDI resources. Error message: " + msg;
@@ -706,7 +770,7 @@
 
     function getcurrentOutput() {
         var outputsToString = "";
-        midi.outputs.forEach(function(output, key) {
+        midi.outputs.forEach(function (output, key) {
             if (outputsToString == "") {
                 outputsToString +=
                     "<option selected='selected' value='" +
@@ -722,22 +786,20 @@
         });
         document.getElementById("chooseOutput").innerHTML = outputsToString;
     }
+
     //Three Keys at once
     var clickedMultipleKeys = [];
 
     const checkMultipleKeys = () => {
         if (clickedMultipleKeys.length !== 3) return false;
-    
-    // Create a Set to get unique keys only
-    const uniqueKeysPressed = new Set(clickedMultipleKeys);
-    
-    // If there are duplicates, uniqueKeysPressed.size will be less than 3
-    if (uniqueKeysPressed.size !== 3) return false;
-    
-    // Check if all pressed keys match song_notes exactly
-    return song_notes.every(requiredKey => 
-        uniqueKeysPressed.has(requiredKey)
-    );
+
+        const uniqueKeysPressed = new Set(clickedMultipleKeys);
+
+        if (uniqueKeysPressed.size !== 3) return false;
+
+        return song_notes.every(requiredKey =>
+            uniqueKeysPressed.has(requiredKey)
+        );
 
     }
 
@@ -745,7 +807,7 @@
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
         // let clicked_note = document.getElementById(key_id).querySelector("p.chord").textContent;
-    
+
         if (song_notes.includes(key_id)) {
             let node = document.createElement("div");
             node.classList.add("success_note_tile");
@@ -760,12 +822,12 @@
                 // Function to show SweetAlert confirmation dialog
                 function redirectWithConfirmation() {
                     swal({
-                            title: "Redirect",
-                            text: "Are you sure you want to redirect?",
-                            icon: "success",
-                            buttons: true,
-                            dangerMode: true,
-                        })
+                        title: "Redirect",
+                        text: "Are you sure you want to redirect?",
+                        icon: "success",
+                        buttons: true,
+                        dangerMode: true,
+                    })
                         .then((willRedirect) => {
                             if (willRedirect) {
                                 // If user confirms, redirect the page
@@ -787,7 +849,7 @@
             () => {
                 var elements = document.getElementsByClassName("success_note_tile");
                 var elementsArray = Array.from(elements);
-                elementsArray.forEach(function(element) {
+                elementsArray.forEach(function (element) {
                     console.log(element)
                     element.remove();
                 });
@@ -795,17 +857,17 @@
         )
 
         var noteOnMsg = [0x90, pitch, 96];
-        if(midi) currentOutput.send(noteOnMsg);
+        if (midi) currentOutput.send(noteOnMsg);
         else {
             const midiNote = Tone.Frequency(key_id.slice(3), "midi").toNote();
             piano.triggerAttack(midiNote, Tone.now());
-            piano.triggerRelease(midiNote, Tone.now()+0.75);
+            piano.triggerRelease(midiNote, Tone.now() + 0.75);
         }
 
 
     }
 
-    Tone.context = new AudioContext({ latencyHint: 'interactive' });
+    Tone.context = new AudioContext({latencyHint: 'interactive'});
     Tone.Transport.latencyHint = 'interactive';
     const piano = new Tone.Sampler({
         urls: {
@@ -842,12 +904,13 @@
         },
         release: 1,
         // baseUrl: "https://tonejs.github.io/audio/salamander/", // Sample piano audio from the Salamander Piano
-        baseUrl:"../../piano_samples/",
-        onload:()=>{
+        baseUrl: "../../piano_samples/",
+        onload: () => {
             console.log("Loaded")
         },
     }).toDestination();
-function stopNote(senderDiv) {
+
+    function stopNote(senderDiv) {
         var pitch = senderDiv.id.substring(3, 5);
         var noteOffMsg = [0x80, pitch, 0];
         currentOutput.send(noteOffMsg);
@@ -878,6 +941,7 @@ function stopNote(senderDiv) {
         document.getElementById("tempoInput").value = tempo;
         document.getElementById("tempoInput").setAttribute('value', tempo);
     }
+
     // Adjust Tempo End-2
 </script>
 

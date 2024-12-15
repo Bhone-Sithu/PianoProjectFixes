@@ -733,12 +733,15 @@
     var clickedMultipleKeys = [];
 
     const checkMultipleKeys = () => {
-        let checkCount = 0;
-        clickedMultipleKeys.map(element => {
-            if (song_notes.includes(element)) checkCount++;
-        })
-        return (checkCount === 3);
+        if (clickedMultipleKeys.length !== 3) return false;
 
+        const uniqueKeysPressed = new Set(clickedMultipleKeys);
+
+        if (uniqueKeysPressed.size !== 3) return false;
+
+        return song_notes.every(requiredKey =>
+            uniqueKeysPressed.has(requiredKey)
+        );
 
     }
 
