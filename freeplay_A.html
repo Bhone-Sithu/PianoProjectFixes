@@ -181,8 +181,9 @@
 <body onload="startMIDI()">
     <div class="audio">
 
-        <midi-player src="songs/Prelude in C (A Major).mid" sound-font visualizer="#myVisualizer">
+        <midi-player src="songs/Prelude in C (A Major).mid" sound-font visualizer="#myVisualizer" id="midiPlayer">
         </midi-player>
+        <input type="file" accept=".mid" id="user-midi" name="user-midi" onchange="handleMidiFile(event)" />
     </div>
     <p id="log_string"></p>
     <div id="note_container">
@@ -416,6 +417,7 @@
 </body>
 <script src="https://unpkg.com/@tonejs/midi"></script>
 <script src="https://unpkg.com/tone/build/Tone.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.min.js"></script>
 <!-- MIDI PLAYER START-->
 <script src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.4.0"></script>
 
@@ -423,17 +425,30 @@
 <script>
     var midi = null;
     var currentOutput = null;
-    let song_notes = ["key57", "key61", "key64", "key69", "key73", "key64", "key69", "key73",
-        "key57", "key61", "key64", "key69", "key73", "key64", "key69", "key73",
-        "key57", "key59", "key66", "key71", "key74", "key66", "key71", "key74",
-        "key57", "key59", "key66", "key71", "key74", "key66", "key71", "key74",
-        "key56", "key59", "key64", "key71", "key74", "key64", "key71", "key74",
-        "key56", "key59", "key64", "key71", "key74", "key64", "key71", "key74",
-        "key57", "key61", "key64", "key69", "key73", "key64", "key69", "key73",
-        "key57", "key61", "key64", "key69", "key73", "key64", "key69", "key73"
-    ];
+    // let song_notes = ["key57", "key61", "key64", "key69", "key73", "key64", "key69", "key73",
+    //     "key57", "key61", "key64", "key69", "key73", "key64", "key69", "key73",
+    //     "key57", "key59", "key66", "key71", "key74", "key66", "key71", "key74",
+    //     "key57", "key59", "key66", "key71", "key74", "key66", "key71", "key74",
+    //     "key56", "key59", "key64", "key71", "key74", "key64", "key71", "key74",
+    //     "key56", "key59", "key64", "key71", "key74", "key64", "key71", "key74",
+    //     "key57", "key61", "key64", "key69", "key73", "key64", "key69", "key73",
+    //     "key57", "key61", "key64", "key69", "key73", "key64", "key69", "key73"
+    // ];
+    let song_notes = [];
     let current_notes_index = 0;
     var error_count = 0;
+    //user input midi file
+    const handleMidiFile = async (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const midi = new Midi(e.target.result);
+            updateNoteMidi(midi);
+        };
+
+        reader.readAsArrayBuffer(file);
+        // updateNoteMidi(await Midi.fromUrl(event.target.files[0])); // File Object
+    }
     const pressed_key = (event) => {
 
             let key = String.fromCharCode(event.keyCode);
@@ -588,29 +603,92 @@
     var timeoutIDs = []; // Array to store setTimeout IDs
     let prevTime = 0;
 
+    let inactivityTimer = null;
+    let lastPlayedNoteIndex = 0;
+    const INACTIVITY_TIMEOUT = 5000; // 1 minute in milliseconds
+    let midiPlayer;
+
     function scheduleEvents() {
         let delay = 0;
-        console.log("hihi")
-        noteToDisplay.slice(prevNoteIndex).forEach((note) => {
+        const currentTime = midiPlayer.currentTime;
 
-            delay = (note.time - prevTime) * 1000
+        noteToDisplay.slice(prevNoteIndex).forEach((note) => {
+            // Calculate delay relative to current MIDI player position
+            delay = (note.time - currentTime) * 1000;
+
+            if (delay < 0) {
+                // Skip notes that should have already played
+                prevNoteIndex++;
+                prevTime = note.time;
+                return;
+            }
+
             const noteTimeout = setTimeout(() => {
                 playNoteWithDelay(note);
                 prevNoteIndex++;
                 prevTime = note.time;
             }, delay);
+
             timeoutIDs.push(noteTimeout);
         });
     }
     const playButton = document.querySelector('midi-player').shadowRoot.querySelector('.play');
 
+    const updateNoteMidi = (midiFile) => {
+        noteToDisplay = [];
+        console.log(midiFile);
+        midiFile.tracks.forEach(track => {
+            //tracks have notes and controlChanges
+            //notes are an array
+            const notes = track.notes
+            notes.forEach(note => {
+                noteToDisplay.push(note)
+                //note.midi, note.time, note.duration, note.name
+            });
+            console.log("Display Notes", noteToDisplay)
+
+        })
+        noteToDisplay.sort((a, b) => {
+            return a.time - b.time;
+        })
+    }
+    function resumeFromLastNote() {
+        if (midiPlayer) {
+            // Calculate time position based on last played note
+            const timePosition = noteToDisplay[lastPlayedNoteIndex].time;
+            // Set MIDI player currentTime to last played note position
+
+            midiPlayer.currentTime = timePosition;
+            console.log(midiPlayer.currentTime)
+            // Reset visual demo state
+            prevNoteIndex = lastPlayedNoteIndex;
+            prevTime = timePosition;
+
+            // Clear existing timeouts
+            timeoutIDs.forEach((id) => {
+                clearTimeout(id);
+            });
+            timeoutIDs = [];
+
+            // Start playback
+            setTimeout(() => {
+                if (!isMidiPlay) {
+                    playButton.dispatchEvent(new Event('click'));
+                }
+                scheduleEvents();
+            }, 100);
+        }
+    }
     async function startMIDI() {
+        midiPlayer = document.getElementById("midiPlayer");
         playButton.addEventListener('click', () => {
             // Tone.Transport.bpm.value = 29;
             isMidiPlay = !isMidiPlay;
             if (isMidiPlay) {
-                scheduleEvents();
+                resumeFromLastNote();
             } else {
+                let timePosition = noteToDisplay[lastPlayedNoteIndex].time;
+                midiPlayer.currentTime = timePosition;
                 timeoutIDs.forEach((id) => {
                     clearTimeout(id);
                 });
@@ -619,18 +697,8 @@
         });
         const midi = await Midi.fromUrl("./songs/Prelude in C (A Major).mid");
         //get the tracks
-        midi.tracks.forEach(track => {
-            //tracks have notes and controlChanges
-            //notes are an array
-            const notes = track.notes
-            notes.forEach(note => {
-                noteToDisplay.push(note)
-                    //note.midi, note.time, note.duration, note.name
-            })
-        })
-        noteToDisplay.sort((a, b) => {
-            return a.time - b.time;
-        })
+        updateNoteMidi(midi);
+
         document.addEventListener('keydown', (event) => {
             pressed_key(event);
         })
@@ -639,7 +707,6 @@
             navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
             console.log("MIDI YES")
         } else {
-
             document.getElementById("log_string").innerHTML =
                 "Your browser does not support the Web MIDI API!";
         }
@@ -727,21 +794,31 @@
     }
 
     function playNote(senderDiv) {
+        if (inactivityTimer) {
+            clearTimeout(inactivityTimer);
+        }
+
         if (isMidiPlay) {
             playButton.dispatchEvent(new Event("click"));
-            setTimeout(() => {
-                playButton.dispatchEvent(new Event("click"));
-            }, 5000)
+
         }
+        inactivityTimer = setTimeout(() => {
+            if (!isMidiPlay) {
+                resumeFromLastNote();
+            }
+        }, INACTIVITY_TIMEOUT);
 
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
+        console.log(pitch);
+        console.log(noteToDisplay[current_notes_index].midi);
         var noteOnMsg = [0x90, pitch, 96];
-        if (key_id === song_notes[current_notes_index]) {
+        if (+pitch === noteToDisplay[current_notes_index].midi) {
 
+            lastPlayedNoteIndex = current_notes_index;
             //Progress percent calculate
-            let keyCount = song_notes.length;
-            let oneNotePercent = (1 / song_notes.length) * 100;
+            let keyCount = noteToDisplay.length;
+            let oneNotePercent = (1 / noteToDisplay.length) * 100;
 
             let percentage = (oneNotePercent * (current_notes_index + 1)).toFixed(2);
             document.getElementById("progress-count").innerText = "Progress : " + percentage + "%";
@@ -752,11 +829,26 @@
             setTimeout(
                 () => {
                     if (percentage >= 100.00) {
-                        if (confirm("Congratulations! You have completed this exercise. You can continue to next advance exercise or replay this one.")) {
-                            location.href = "DifficultExercises/index.html"
-                        } else {
-                            location.reload();
+                        function redirectWithConfirmation() {
+                            swal({
+                                title: "Success",
+                                text: "Congratulation! You can now play in real world.",
+                                icon: "success",
+                                buttons: true,
+                                dangerMode: true,
+                            })
+                                .then((willRedirect) => {
+                                    if (willRedirect) {
+                                        // If user confirms, redirect the page
+                                        window.location.href = "playPiano.html"; // Replace "https://example.com" with your desired URL
+                                    } else {
+                                        location.reload();
+                                    }
+                                });
                         }
+
+                        // Call the function to show the confirmation dialog
+                        redirectWithConfirmation();
                     }
                 }, 500
             )
@@ -805,7 +897,6 @@
             element.classList.remove("note_fail");
         });
 
-        let key = song_notes[current_notes_index];
 
         // document.getElementById("note").innerHTML = key;
         // console.log("hi");
