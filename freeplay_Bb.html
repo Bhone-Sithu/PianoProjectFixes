@@ -4,11 +4,15 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Sweet Alert -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <style>
         h1 {
             text-align: center;
         }
-        
+
         .btn {
             background-color: DodgerBlue;
             border: none;
@@ -18,18 +22,18 @@
             cursor: pointer;
         }
         /* Darker background on mouse-over */
-        
+
         .btn:hover {
             background-color: RoyalBlue;
         }
-        
+
         div {
             clear: left;
             padding: 0;
             padding-top: 30px;
             cursor: default;
         }
-        
+
         div.white_key {
             clear: none;
             height: 100px;
@@ -40,7 +44,7 @@
             cursor: pointer;
             position: relative;
         }
-        
+
         div.white_key:hover {
             clear: none;
             height: 100px;
@@ -50,7 +54,7 @@
             cursor: pointer;
             background-color: rgb(83, 171, 238);
         }
-        
+
         div.black_key {
             position: absolute;
             height: 50px;
@@ -59,75 +63,75 @@
             background-color: black;
             cursor: pointer;
         }
-        
+
         .keyboard {
             text-align: center;
         }
-        
+
         #div_keyboard {
             margin: 0 auto;
             width: 100vw;
             scale:0.95;
         }
-        
+
         .chord {
             text-align: center;
             margin-top: 65px;
         }
-        
+
         .black_chord {
             text-align: center;
             margin-top: 2px;
             color: aliceblue;
         }
-        
+
         div.note_success {
             background-color: greenyellow;
         }
-        
+
         div.note_fail {
             background-color: #82ffee !important;
         }
-        
+
         #note_container {
             height: 100px;
             position: relative;
         }
-        
+
         #note_container p {
             opacity: 0;
             transition: 0.75s ease-in-out;
             position: absolute;
         }
-        
+
         #note_container .main_note {
             opacity: 1;
             font-size: 1.5rem;
             left: 20%;
         }
-        
+
         #note_container .previous_note {
             opacity: 0.5;
             left: 16%;
         }
-        
+
         #note_container .no_note {
             scale: 0;
             opacity: 0;
             left: 10%;
         }
-        
+
         #note_container .next_note {
             opacity: 0.5;
             left: 25%;
         }
-        
+
         #note_container .future_note {
             scale: 0;
             opacity: 0;
             left: 30%;
         }
-        
+
         .success_note_tile {
             height: 100%;
             width: 100%;
@@ -136,7 +140,7 @@
             position: absolute;
             opacity: 0;
         }
-        
+
         .demo_note_tile {
             height: 100%;
             width: 100%;
@@ -146,13 +150,13 @@
             opacity: 0;
         }
         /* Music Player Part */
-        
+
         #progress {
             margin: 0 auto;
             /*width: 100%;*/
             text-align: center;
         }
-        
+
         #progress p:first-child {
             color: green;
         }
@@ -160,7 +164,7 @@
             color: red;
         }
          */
-        
+
         @keyframes success_note_fly {
             0% {
                 opacity: 0.8;
@@ -171,250 +175,292 @@
                 top: 150%;
             }
         }
+        midi-player::part(progress-bar),
+        midi-player::part(seek-bar) {
+            pointer-events: none !important;
+        }
+        .custom-file-upload {
+            display: inline-block;
+            padding: 12px 16px;
+            background-color: DodgerBlue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 30px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background-color: RoyalBlue;
+        }
+
+        /* Hide the original file input */
+        #user-midi {
+            display: none;
+        }
+
+        /* Style the audio container */
+        .audio {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            margin: 20px;
+        }
     </style>
     <title>Advanced INC.MUSIC</title>
-    <h1>Bb Major</h1>
+    <h1>C Majors</h1>
     <button class="btn" onclick="document.location='index.html'"><i class="fa fa-home"></i>Home </button>
 
 </head>
 
 <body onload="startMIDI()">
-    <div class="audio">
+<div class="audio">
+    <midi-player
+            src="songs/Prelude_C_major.mid"
+            sound-font visualizer="#myVisualizer"
+            id="midiPlayer">
+    </midi-player>
 
-        <midi-player src="songs/Prelude in C (Bb Major).mid" sound-font visualizer="#myVisualizer">
-        </midi-player>
+    <label for="user-midi" class="custom-file-upload">
+        <i class="fa fa-upload"></i>
+        <span id="midi-file-name">Upload your own MIDI File</span>
+    </label>
+    <input type="file" accept=".mid" id="user-midi" name="user-midi" onchange="handleMidiFile(event)" />
+</div>
+<p id="log_string"></p>
+<div id="note_container">
+    <!-- <p id="note" style="opacity: 1;"></p> -->
+</div>
+<div id="div_keyboard">
+
+    <!-- white keys -->
+    <!--        NEW KEYS-->
+    <div id="key36" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">C</p>
     </div>
-    <p id="log_string"></p>
-    <div id="note_container">
-        <!-- <p id="note" style="opacity: 1;"></p> -->
+    <div id="key38" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">D</p>
     </div>
-    <div id="div_keyboard">
-
-        <!-- white keys -->
-        <!--        NEW KEYS-->
-        <div id="key36" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key38" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key40" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key41" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key43" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key45" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key47" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-<!--        NEW KEYS-->
-        <div id="key48" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key50" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key52" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key53" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key55" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key57" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key59" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-        <div id="key60" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key62" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key64" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key65" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key67" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key69" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key71" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-        <div id="key72" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key74" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key76" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key77" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key79" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key81" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key83" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-        <div id="key84" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-<!--        NEW KEYS-->
-        <div id="key85" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">C</p>
-        </div>
-        <div id="key87" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">D</p>
-        </div>
-        <div id="key89" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">E</p>
-        </div>
-        <div id="key90" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">F</p>
-        </div>
-        <div id="key92" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">G</p>
-        </div>
-        <div id="key94" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">A</p>
-        </div>
-        <div id="key96" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
-            <p class="chord">B</p>
-        </div>
-        <!-- black keys -->
-        <!-- First Octave Black Keys -->
-        <div id="key37" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 30px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key39" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 70px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key42" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 150px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key44" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 190px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key46" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 230px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
-
-        <!-- Second Octave Black Keys -->
-        <div id="key49" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 310px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key51" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 350px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key54" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 430px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key56" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 470px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key58" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 510px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
-
-        <!-- Third Octave Black Keys -->
-        <div id="key61" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 590px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key63" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 630px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key66" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 710px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key68" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 750px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key70" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 790px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
-
-        <!-- Fourth Octave Black Keys -->
-        <div id="key73" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 870px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key75" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 910px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key78" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 990px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key80" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1030px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key82" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1070px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
-
-        <!-- Fifth Octave Black Keys -->
-        <div id="key86" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1150px">
-            <p class="black_chord">C#<br />Db</p>
-        </div>
-        <div id="key88" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1190px">
-            <p class="black_chord">D#<br />Eb</p>
-        </div>
-        <div id="key91" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1270px">
-            <p class="black_chord">F#<br />Gb</p>
-        </div>
-        <div id="key93" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1310px">
-            <p class="black_chord">G#<br />Ab</p>
-        </div>
-        <div id="key95" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1350px">
-            <p class="black_chord">A#<br />Bb</p>
-        </div>
+    <div id="key40" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">E</p>
     </div>
-    <div id="progress">
-        <p id="progress-count">Progress : 0%</p>
-        <!-- <p id="error-count">Error : 0/10</p> -->
+    <div id="key41" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">F</p>
     </div>
-    <div id="div_options">
+    <div id="key43" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div id="key45" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div id="key47" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <!--        NEW KEYS-->
+    <div id="key48" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <div id="key50" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">D</p>
+    </div>
+    <div id="key52" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div id="key53" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div id="key55" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div id="key57" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div id="key59" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <div id="key60" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <div id="key62" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">D</p>
+    </div>
+    <div id="key64" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div id="key65" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div id="key67" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div id="key69" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div id="key71" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <div id="key72" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <div id="key74" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">D</p>
+    </div>
+    <div id="key76" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div id="key77" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div id="key79" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div id="key81" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div id="key83" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <div id="key84" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <!--        NEW KEYS-->
+    <div id="key85" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">C</p>
+    </div>
+    <div id="key87" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">D</p>
+    </div>
+    <div id="key89" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">E</p>
+    </div>
+    <div id="key90" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">F</p>
+    </div>
+    <div id="key92" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">G</p>
+    </div>
+    <div id="key94" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">A</p>
+    </div>
+    <div id="key96" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)">
+        <p class="chord">B</p>
+    </div>
+    <!-- black keys -->
+    <!-- First Octave Black Keys -->
+    <div id="key37" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 30px">
+        <p class="black_chord">C#<br />Db</p>
+    </div>
+    <div id="key39" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 70px">
+        <p class="black_chord">D#<br />Eb</p>
+    </div>
+    <div id="key42" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 150px">
+        <p class="black_chord">F#<br />Gb</p>
+    </div>
+    <div id="key44" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 190px">
+        <p class="black_chord">G#<br />Ab</p>
+    </div>
+    <div id="key46" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 230px">
+        <p class="black_chord">A#<br />Bb</p>
+    </div>
 
-        <p>
-            <label for="chooseOutput">MIDI Output</label><br />
-            <select id="chooseOutput" onchange="changeOutput(value)">
+    <!-- Second Octave Black Keys -->
+    <div id="key49" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 310px">
+        <p class="black_chord">C#<br />Db</p>
+    </div>
+    <div id="key51" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 350px">
+        <p class="black_chord">D#<br />Eb</p>
+    </div>
+    <div id="key54" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 430px">
+        <p class="black_chord">F#<br />Gb</p>
+    </div>
+    <div id="key56" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 470px">
+        <p class="black_chord">G#<br />Ab</p>
+    </div>
+    <div id="key58" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 510px">
+        <p class="black_chord">A#<br />Bb</p>
+    </div>
+
+    <!-- Third Octave Black Keys -->
+    <div id="key61" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 590px">
+        <p class="black_chord">C#<br />Db</p>
+    </div>
+    <div id="key63" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 630px">
+        <p class="black_chord">D#<br />Eb</p>
+    </div>
+    <div id="key66" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 710px">
+        <p class="black_chord">F#<br />Gb</p>
+    </div>
+    <div id="key68" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 750px">
+        <p class="black_chord">G#<br />Ab</p>
+    </div>
+    <div id="key70" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 790px">
+        <p class="black_chord">A#<br />Bb</p>
+    </div>
+
+    <!-- Fourth Octave Black Keys -->
+    <div id="key73" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 870px">
+        <p class="black_chord">C#<br />Db</p>
+    </div>
+    <div id="key75" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 910px">
+        <p class="black_chord">D#<br />Eb</p>
+    </div>
+    <div id="key78" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 990px">
+        <p class="black_chord">F#<br />Gb</p>
+    </div>
+    <div id="key80" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1030px">
+        <p class="black_chord">G#<br />Ab</p>
+    </div>
+    <div id="key82" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1070px">
+        <p class="black_chord">A#<br />Bb</p>
+    </div>
+
+    <!-- Fifth Octave Black Keys -->
+    <div id="key86" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1150px">
+        <p class="black_chord">C#<br />Db</p>
+    </div>
+    <div id="key88" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1190px">
+        <p class="black_chord">D#<br />Eb</p>
+    </div>
+    <div id="key91" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1270px">
+        <p class="black_chord">F#<br />Gb</p>
+    </div>
+    <div id="key93" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1310px">
+        <p class="black_chord">G#<br />Ab</p>
+    </div>
+    <div id="key95" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left: 1350px">
+        <p class="black_chord">A#<br />Bb</p>
+    </div>
+</div>
+<div id="progress">
+    <p id="progress-count">Progress : 0%</p>
+    <!-- <p id="error-count">Error : 0/10</p> -->
+</div>
+<div id="div_options">
+
+    <p>
+        <label for="chooseOutput">MIDI Output</label><br />
+        <select id="chooseOutput" onchange="changeOutput(value)">
             <option>None</option>
         </select>
-        </p>
-        <p>
-            Instrument<br />
-            <input type="radio" name="instrument" id="piano" checked="checked" onclick="changeProgram(0)" />
-            <label for="piano">Piano</label>
-            <input type="radio" name="instrument" id="harpsichord" onclick="changeProgram(6)" />
-            <label for="harpsichord">Harpsichord</label>
-            <input type="radio" name="instrument" id="organ" onclick="changeProgram(19)" />
-            <label for="organ">Organ</label>
-            <input type="radio" name="instrument" id="celesta" onclick="changeProgram(8)" />
-            <label for="celesta">Celesta</label>
-        </p>
+    </p>
+    <p>
+        Instrument<br />
+        <input type="radio" name="instrument" id="piano" checked="checked" onclick="changeProgram(0)" />
+        <label for="piano">Piano</label>
+        <input type="radio" name="instrument" id="harpsichord" onclick="changeProgram(6)" />
+        <label for="harpsichord">Harpsichord</label>
+        <input type="radio" name="instrument" id="organ" onclick="changeProgram(19)" />
+        <label for="organ">Organ</label>
+        <input type="radio" name="instrument" id="celesta" onclick="changeProgram(8)" />
+        <label for="celesta">Celesta</label>
+    </p>
 
-    </div>
+</div>
 </body>
 <script src="https://unpkg.com/@tonejs/midi"></script>
+<script src="https://unpkg.com/tone/build/Tone.js"></script>
 <script src="https://unpkg.com/tone/build/Tone.js"></script>
 <!-- MIDI PLAYER START-->
 <script src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.4.0"></script>
@@ -423,164 +469,169 @@
 <script>
     var midi = null;
     var currentOutput = null;
-    let song_notes = ["key58", "key62", "key65", "key70", "key74", "key65", "key70", "key74",
-        "key58", "key62", "key65", "key70", "key74", "key65", "key70", "key74",
-        "key58", "key60", "key67", "key72", "key75", "key67", "key72", "key75",
-        "key58", "key60", "key67", "key72", "key75", "key67", "key72", "key75",
-        "key57", "key60", "key65", "key72", "key75", "key65", "key72", "key75",
-        "key57", "key60", "key65", "key72", "key75", "key65", "key72", "key75",
-        "key58", "key63", "key65", "key70", "key74", "key65", "key70", "key74",
-        "key58", "key63", "key65", "key70", "key74", "key65", "key70", "key74"
-    ];
     let current_notes_index = 0;
     var error_count = 0;
+    let percentage = 0;
+    //user input midi file
+    const handleMidiFile = async (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const midi = new Midi(e.target.result);
+            updateNoteMidi(midi);
+        };
+
+        reader.readAsArrayBuffer(file);
+        document.getElementById("midi-file-name").innerText = file.name;
+        // updateNoteMidi(await Midi.fromUrl(event.target.files[0])); // File Object
+    }
     const pressed_key = (event) => {
 
-            let key = String.fromCharCode(event.keyCode);
-            let keyid = 0;
-            try {
-                switch (key) {
-                    // first black keys
-                    case "2": //D#3
-                        keyid = 51;
-                        break;
-                    case "5": //F#3
-                        keyid = 54;
-                        break;
-                    case "7": //G#3
-                        keyid = 56;
-                        break;
-                    case "9": //A#3
-                        keyid = 58;
-                        break;
-                        // first white keys
-                    case "1": //D3
-                        keyid = 50;
-                        break;
-                    case "3": //E3
-                        keyid = 52;
-                        break;
-                    case "4": //F3
-                        keyid = 53;
-                        break;
-                    case "6": //G3
-                        keyid = 55;
-                        break;
-                    case "8": //A3
-                        keyid = 57;
-                        break;
-                    case "0": //B3
-                        keyid = 59;
-                        break;
-                        // last 2 octaves of black keys
-                    case "Q": //C#4
-                        keyid = 61;
-                        break;
-                    case "W": //D#4
-                        keyid = 63;
-                        break;
-                    case "E": //F#4
-                        keyid = 66;
-                        break;
-                    case "R": //G#4
-                        keyid = 68;
-                        break;
-                    case "T": //A#4
-                        keyid = 70;
-                        break;
-                    case "Y": //C#5
-                        keyid = 73;
-                        break;
-                    case "U": //D#5
-                        keyid = 75;
-                        break;
-                    case "I": //F#5
-                        keyid = 78;
-                        break;
-                    case "O": //G#5
-                        keyid = 80;
-                        break;
-                    case "P": //A#5
-                        keyid = 82;
-                        break;
-                        // White Key
-                    case "A": //A3
-                        keyid = 57;
-                        break;
-                    case "S": //B3
-                        keyid = 59;
-                        break;
-                    case "D": //C4
-                        keyid = 60;
-                        break;
-                    case "F": //D4
-                        keyid = 62;
-                        break;
-                    case "G": //E4
-                        keyid = 64;
-                        break;
-                    case "H": //F4
-                        keyid = 65;
-                        break;
-                    case "J": //G4
-                        keyid = 67;
-                        break;
-                    case "K": //A4
-                        keyid = 69;
-                        break;
-                    case "L": //B4
-                        keyid = 71;
-                        break;
-                    case "Z": //C5
-                        keyid = 72;
-                        break;
-                    case "X": //D5
-                        keyid = 74;
-                        break;
-                    case "C": //E5
-                        keyid = 76;
-                        break;
-                    case "V": //F5
-                        keyid = 77;
-                        break;
-                    case "B": //G5
-                        keyid = 79;
-                        break;
-                    case "N": //A5
-                        keyid = 81;
-                        break;
-                    case "M": //B5
-                        keyid = 83;
-                        break;
-                    default:
-                        break;
-                }
-                console.log("key" + keyid)
-                document.getElementById("key" + keyid).dispatchEvent(new Event('mousedown'));
-            } catch (error) {
-                console.log("key" + keyid)
-                document.getElementById("key" + keyid).dispatchEvent(new Event('nodefail'));
+        let key = String.fromCharCode(event.keyCode);
+        let keyid = 0;
+        try {
+            switch (key) {
+                // first black keys
+                case "2": //D#3
+                    keyid = 51;
+                    break;
+                case "5": //F#3
+                    keyid = 54;
+                    break;
+                case "7": //G#3
+                    keyid = 56;
+                    break;
+                case "9": //A#3
+                    keyid = 58;
+                    break;
+                // first white keys
+                case "1": //D3
+                    keyid = 50;
+                    break;
+                case "3": //E3
+                    keyid = 52;
+                    break;
+                case "4": //F3
+                    keyid = 53;
+                    break;
+                case "6": //G3
+                    keyid = 55;
+                    break;
+                case "8": //A3
+                    keyid = 57;
+                    break;
+                case "0": //B3
+                    keyid = 59;
+                    break;
+                // last 2 octaves of black keys
+                case "Q": //C#4
+                    keyid = 61;
+                    break;
+                case "W": //D#4
+                    keyid = 63;
+                    break;
+                case "E": //F#4
+                    keyid = 66;
+                    break;
+                case "R": //G#4
+                    keyid = 68;
+                    break;
+                case "T": //A#4
+                    keyid = 70;
+                    break;
+                case "Y": //C#5
+                    keyid = 73;
+                    break;
+                case "U": //D#5
+                    keyid = 75;
+                    break;
+                case "I": //F#5
+                    keyid = 78;
+                    break;
+                case "O": //G#5
+                    keyid = 80;
+                    break;
+                case "P": //A#5
+                    keyid = 82;
+                    break;
+                // White Key
+                case "A": //A3
+                    keyid = 57;
+                    break;
+                case "S": //B3
+                    keyid = 59;
+                    break;
+                case "D": //C4
+                    keyid = 60;
+                    break;
+                case "F": //D4
+                    keyid = 62;
+                    break;
+                case "G": //E4
+                    keyid = 64;
+                    break;
+                case "H": //F4
+                    keyid = 65;
+                    break;
+                case "J": //G4
+                    keyid = 67;
+                    break;
+                case "K": //A4
+                    keyid = 69;
+                    break;
+                case "L": //B4
+                    keyid = 71;
+                    break;
+                case "Z": //C5
+                    keyid = 72;
+                    break;
+                case "X": //D5
+                    keyid = 74;
+                    break;
+                case "C": //E5
+                    keyid = 76;
+                    break;
+                case "V": //F5
+                    keyid = 77;
+                    break;
+                case "B": //G5
+                    keyid = 79;
+                    break;
+                case "N": //A5
+                    keyid = 81;
+                    break;
+                case "M": //B5
+                    keyid = 83;
+                    break;
+                default:
+                    break;
             }
+            console.log("key" + keyid)
+            document.getElementById("key" + keyid).dispatchEvent(new Event('mousedown'));
+        } catch (error) {
+            console.log("key" + keyid)
+            document.getElementById("key" + keyid).dispatchEvent(new Event('nodefail'));
         }
-        // const playButton = document.querySelector('midi-player').shadowRoot.querySelector('.play');
-        // playButton.addEventListener('click', () => {
-        //     // Tone.Transport.bpm.value = 29;
-        //     isMidiPlay = !isMidiPlay;
-        //     if (isMidiPlay) {
-        //     }
-        //     else
-        //     {
-        //     }
-        // });
+    }
+    // const playButton = document.querySelector('midi-player').shadowRoot.querySelector('.play');
+    // playButton.addEventListener('click', () => {
+    //     // Tone.Transport.bpm.value = 29;
+    //     isMidiPlay = !isMidiPlay;
+    //     if (isMidiPlay) {
+    //     }
+    //     else
+    //     {
+    //     }
+    // });
     function playNoteWithDelay(note) {
         // Simulate click event on a note based on MIDI or name
         let node = document.createElement("div");
         node.classList.add("demo_note_tile");
         document.getElementById("key" + note.midi).appendChild(node);
         setTimeout(() => {
-                document.getElementById("key" + note.midi).removeChild(node)
-            }, 1000)
-            // Here you can dispatch your click event or play sound
+            document.getElementById("key" + note.midi).removeChild(node)
+        }, 1000)
+        // Here you can dispatch your click event or play sound
     }
     var noteToDisplay = [];
     var prevNoteIndex = 0;
@@ -588,29 +639,117 @@
     var timeoutIDs = []; // Array to store setTimeout IDs
     let prevTime = 0;
 
+    let inactivityTimer = null;
+    let lastPlayedNoteIndex = 0;
+    const INACTIVITY_TIMEOUT = 5000; // 1 minute in milliseconds
+    let midiPlayer;
+
     function scheduleEvents() {
         let delay = 0;
-        console.log("hihi")
-        noteToDisplay.slice(prevNoteIndex).forEach((note) => {
+        const currentTime = midiPlayer.currentTime;
 
-            delay = (note.time - prevTime) * 1000
+        noteToDisplay.slice(prevNoteIndex).forEach((note) => {
+            // Calculate delay relative to current MIDI player position
+            delay = (note.time - currentTime) * 1000;
+
+            if (delay < 0) {
+                // Skip notes that should have already played
+                prevNoteIndex++;
+                prevTime = note.time;
+                return;
+            }
+
             const noteTimeout = setTimeout(() => {
                 playNoteWithDelay(note);
                 prevNoteIndex++;
                 prevTime = note.time;
             }, delay);
+
             timeoutIDs.push(noteTimeout);
         });
     }
     const playButton = document.querySelector('midi-player').shadowRoot.querySelector('.play');
 
+    const updateNoteMidi = (midiFile) => {
+        noteToDisplay = [];
+        console.log(midiFile);
+        midiFile.tracks.forEach(track => {
+            //tracks have notes and controlChanges
+            //notes are an array
+            const notes = track.notes
+            notes.forEach(note => {
+                noteToDisplay.push(note)
+                //note.midi, note.time, note.duration, note.name
+            });
+            console.log("Display Notes", noteToDisplay)
+
+        })
+        noteToDisplay.sort((a, b) => {
+            return a.time - b.time;
+        });
+        //Reset progress
+        lastPlayedNoteIndex = 0;
+        prevNoteIndex = 0;
+        error_count = 0;
+        current_notes_index = 0;
+        prevNoteIndex = 0;
+        percentage = 0;
+        document.getElementById("progress-count").innerText = "Progress : " + percentage + "%";
+        // Calculate time position based on last played note
+        const timePosition = noteToDisplay[lastPlayedNoteIndex].time;
+        // Set MIDI player currentTime to last played note position
+
+        midiPlayer.currentTime = timePosition;
+        console.log(midiPlayer.currentTime)
+        // Reset visual demo state
+        prevNoteIndex = lastPlayedNoteIndex;
+        prevTime = timePosition;
+
+        // Clear existing timeouts
+        timeoutIDs.forEach((id) => {
+            clearTimeout(id);
+        });
+        timeoutIDs = [];
+
+    }
+    function resumeFromLastNote() {
+        if (midiPlayer) {
+            // Calculate time position based on last played note
+            const timePosition = noteToDisplay[lastPlayedNoteIndex].time;
+            // Set MIDI player currentTime to last played note position
+
+            midiPlayer.currentTime = timePosition;
+            console.log(midiPlayer.currentTime)
+            // Reset visual demo state
+            prevNoteIndex = lastPlayedNoteIndex;
+            prevTime = timePosition;
+
+            // Clear existing timeouts
+            timeoutIDs.forEach((id) => {
+                clearTimeout(id);
+            });
+            timeoutIDs = [];
+
+            // Start playback
+            setTimeout(() => {
+                if (!isMidiPlay) {
+                    playButton.dispatchEvent(new Event('click'));
+                }
+                scheduleEvents();
+            }, 100);
+        }
+    }
     async function startMIDI() {
+        midiPlayer = document.getElementById("midiPlayer");
         playButton.addEventListener('click', () => {
             // Tone.Transport.bpm.value = 29;
+
             isMidiPlay = !isMidiPlay;
             if (isMidiPlay) {
-                scheduleEvents();
+                resumeFromLastNote();
             } else {
+                let timePosition = noteToDisplay[lastPlayedNoteIndex].time;
+                midiPlayer.currentTime = timePosition;
                 timeoutIDs.forEach((id) => {
                     clearTimeout(id);
                 });
@@ -619,18 +758,8 @@
         });
         const midi = await Midi.fromUrl("./songs/Prelude in C (Bb Major).mid");
         //get the tracks
-        midi.tracks.forEach(track => {
-            //tracks have notes and controlChanges
-            //notes are an array
-            const notes = track.notes
-            notes.forEach(note => {
-                noteToDisplay.push(note)
-                    //note.midi, note.time, note.duration, note.name
-            })
-        })
-        noteToDisplay.sort((a, b) => {
-            return a.time - b.time;
-        })
+        updateNoteMidi(midi);
+
         document.addEventListener('keydown', (event) => {
             pressed_key(event);
         })
@@ -639,7 +768,6 @@
             navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
             console.log("MIDI YES")
         } else {
-
             document.getElementById("log_string").innerHTML =
                 "Your browser does not support the Web MIDI API!";
         }
@@ -674,27 +802,26 @@
 
         // Attach MIDI event "listeners" to each input
         for (var input of midiAccess.inputs.values()) {
+            // const throttleMIDIMessage = throttle(getMIDIMessage, 200);
             input.onmidimessage = getMIDIMessage;
         }
     }
 
-    // gggg
-
 
     function getMIDIMessage(midiMessage) {
-    const [status, note, velocity] = midiMessage.data;
+        const [status, note, velocity] = midiMessage.data;
 
-    if (status >= 144 && status <= 159 && velocity > 0) {
-        playNote({
-            id: `key${note}`
-        });
+        if (status >= 144 && status <= 159 && velocity > 0) {
+            playNote({
+                id: `key${note}`
+            });
+        }
+        else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
+            stopNote({
+                id: `key${note}`
+            });
+        }
     }
-    else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
-        stopNote({
-            id: `key${note}`
-        });
-    }
-}
 
     function onMIDIFailure(msg) {
         document.getElementById("log_string").innerHTML =
@@ -730,24 +857,31 @@
     }
 
     function playNote(senderDiv) {
+        if (inactivityTimer) {
+            clearTimeout(inactivityTimer);
+        }
+
         if (isMidiPlay) {
             playButton.dispatchEvent(new Event("click"));
-            setTimeout(() => {
-                playButton.dispatchEvent(new Event("click"));
-            }, 10000)
+
         }
+        inactivityTimer = setTimeout(() => {
+            if (!isMidiPlay) {
+                resumeFromLastNote();
+            }
+        }, INACTIVITY_TIMEOUT);
 
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
         var noteOnMsg = [0x90, pitch, 96];
+        if (+pitch === noteToDisplay[current_notes_index].midi) {
 
-        if (key_id === song_notes[current_notes_index]) {
-
+            lastPlayedNoteIndex = current_notes_index;
             //Progress percent calculate
-            let keyCount = song_notes.length;
-            let oneNotePercent = (1 / song_notes.length) * 100;
+            let keyCount = noteToDisplay.length;
+            let oneNotePercent = (1 / noteToDisplay.length) * 100;
 
-            let percentage = (oneNotePercent * (current_notes_index + 1)).toFixed(2);
+            percentage = (oneNotePercent * (current_notes_index + 1)).toFixed(2);
             document.getElementById("progress-count").innerText = "Progress : " + percentage + "%";
             current_notes_index++;
             let node = document.createElement("div");
@@ -756,11 +890,26 @@
             setTimeout(
                 () => {
                     if (percentage >= 100.00) {
-                        if (confirm("Congratulations! You have completed this exercise. You can continue to next advance exercise or replay this one.")) {
-                            location.href = "DifficultExercises/index.html"
-                        } else {
-                            location.reload();
+                        function redirectWithConfirmation() {
+                            swal({
+                                title: "Success",
+                                text: "Congratulation! You can now play in real world.",
+                                icon: "success",
+                                buttons: true,
+                                dangerMode: true,
+                            })
+                                .then((willRedirect) => {
+                                    if (willRedirect) {
+                                        // If user confirms, redirect the page
+                                        window.location.href = "playPiano.html"; // Replace "https://example.com" with your desired URL
+                                    } else {
+                                        location.reload();
+                                    }
+                                });
                         }
+
+                        // Call the function to show the confirmation dialog
+                        redirectWithConfirmation();
                     }
                 }, 500
             )
@@ -777,16 +926,17 @@
         // let clicked_note = document.getElementById(key_id).querySelector("p.chord").textContent;
 
         setTimeout(
-                () => {
-                    var elements = document.getElementsByClassName("success_note_tile");
-                    var elementsArray = Array.from(elements);
-                    elementsArray.forEach(function(element) {
-                        console.log(element)
-                        element.remove();
-                    });
-                }, 1000
-            )
-            //
+            () => {
+                var elements = document.getElementsByClassName("success_note_tile");
+                var elementsArray = Array.from(elements);
+                elementsArray.forEach(function(element) {
+                    console.log(element)
+                    element.remove();
+                });
+            }, 1000
+        )
+        //
+
         if(midi) currentOutput.send(noteOnMsg);
         else {
             const midiNote = Tone.Frequency(key_id.slice(3), "midi").toNote();
@@ -808,7 +958,6 @@
             element.classList.remove("note_fail");
         });
 
-        let key = song_notes[current_notes_index];
 
         // document.getElementById("note").innerHTML = key;
         // console.log("hi");
@@ -856,7 +1005,7 @@
             console.log("Loaded")
         },
     }).toDestination();
-function stopNote(senderDiv) {
+    function stopNote(senderDiv) {
         var pitch = senderDiv.id.substring(3, 5);
         var noteOffMsg = [0x80, pitch, 0];
         currentOutput.send(noteOffMsg);
