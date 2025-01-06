@@ -701,7 +701,6 @@
         // Set MIDI player currentTime to last played note position
 
         midiPlayer.currentTime = timePosition;
-        console.log(midiPlayer.currentTime)
         // Reset visual demo state
         prevNoteIndex = lastPlayedNoteIndex;
         prevTime = timePosition;
@@ -710,6 +709,7 @@
         timeoutIDs.forEach((id) => {
             clearTimeout(id);
         });
+        clearTimeout(inactivityTimer);
         timeoutIDs = [];
 
     }
@@ -871,7 +871,6 @@
                 resumeFromLastNote();
             }
         }, INACTIVITY_TIMEOUT);
-
         var pitch = senderDiv.id.substring(3, 5);
         let key_id = senderDiv.id;
         var noteOnMsg = [0x90, pitch, 96];

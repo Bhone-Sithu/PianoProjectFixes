@@ -710,6 +710,7 @@
         timeoutIDs.forEach((id) => {
             clearTimeout(id);
         });
+        clearTimeout(inactivityTimer);
         timeoutIDs = [];
 
     }
