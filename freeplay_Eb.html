@@ -483,6 +483,7 @@
 
         reader.readAsArrayBuffer(file);
         document.getElementById("midi-file-name").innerText = file.name;
+        document.getElementById("midiPlayer").src = URL.createObjectURL(file);
         // updateNoteMidi(await Midi.fromUrl(event.target.files[0])); // File Object
     }
     const pressed_key = (event) => {
