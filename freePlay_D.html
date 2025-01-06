@@ -483,7 +483,7 @@
 
         reader.readAsArrayBuffer(file);
         document.getElementById("midi-file-name").innerText = file.name;
-        document.getElementById("midiPlayer").src = URL.createObjectURL(file);
+        // document.getElementById("midiPlayer").src = URL.createObjectURL(file);
         // updateNoteMidi(await Midi.fromUrl(event.target.files[0])); // File Object
     }
     const pressed_key = (event) => {
@@ -679,6 +679,7 @@
             //notes are an array
             const notes = track.notes
             notes.forEach(note => {
+                note.midi+=2;
                 noteToDisplay.push(note)
                 //note.midi, note.time, note.duration, note.name
             });
@@ -758,9 +759,18 @@
                 timeoutIDs = [];
             }
         });
-        const midi = await Midi.fromUrl("./songs/Prelude in C (D Major).mid");
-        //get the tracks
-        updateNoteMidi(midi);
+        const midi = await Midi.fromUrl("./songs/Prelude in C (D Major).mid");midi.tracks.forEach(track => {
+            //tracks have notes and controlChanges
+            //notes are an array
+            const notes = track.notes
+            notes.forEach(note => {
+                noteToDisplay.push(note)
+                //note.midi, note.time, note.duration, note.name
+            });
+        })
+        noteToDisplay.sort((a, b) => {
+            return a.time - b.time;
+        });
 
         document.addEventListener('keydown', (event) => {
             pressed_key(event);
